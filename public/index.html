@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>STAGESIDE — Concert Tour Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111;
+    --surface2: #181818;
+    --border: #222;
+    --accent: #e8ff47;
+    --accent2: #ff4757;
+    --text: #f0f0f0;
+    --muted: #555;
+    --muted2: #888;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 0 36px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 60px; position: sticky; top: 0;
+    background: rgba(10,10,10,0.96); backdrop-filter: blur(12px); z-index: 100;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; color: var(--accent); line-height: 1; }
+  .logo-sub { font-size: 9px; letter-spacing: 2.5px; color: var(--muted2); font-family: 'DM Sans', sans-serif; font-weight: 300; text-transform: uppercase; }
+  .key-bar { display: flex; align-items: center; gap: 8px; }
+  .key-input {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 7px 12px; font-family: 'DM Sans', sans-serif; font-size: 16px;
+    border-radius: 4px; width: 240px; outline: none; transition: border-color .2s;
+  }
+  .key-input:focus { border-color: var(--accent); }
+  .key-input::placeholder { color: var(--muted); font-size: 12px; }
+  .key-status { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background .3s; }
+  .key-status.connected { background: #44ff88; box-shadow: 0 0 6px #44ff88; }
+  .btn {
+    background: var(--accent); color: #000; border: none; padding: 7px 14px;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
+    border-radius: 4px; transition: opacity .2s; white-space: nowrap;
+  }
+  .btn:hover { opacity: .85; }
+  .btn.ghost { background: transparent; color: var(--muted2); border: 1px solid var(--border); }
+  .btn.ghost:hover { color: var(--text); border-color: var(--muted2); }
+
+  /* HERO */
+  .hero {
+    padding: 48px 36px 32px; border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: 'LIVE'; position: absolute;
+    font-family: 'Bebas Neue', sans-serif; font-size: 260px; letter-spacing: -10px;
+    color: rgba(255,255,255,.025); right: -20px; top: -30px; line-height: 1;
+    pointer-events: none; user-select: none;
+  }
+  .hero-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 1px; line-height: 1; margin-bottom: 28px; }
+  .hero-title span { color: var(--accent); }
+  .search-bar { display: flex; gap: 10px; max-width: 720px; position: relative; z-index: 1; }
+  .search-main {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); padding: 13px 18px; font-family: 'DM Sans', sans-serif;
+    font-size: 16px; font-weight: 300; border-radius: 6px; outline: none; transition: border-color .2s;
+  }
+  .search-main:focus { border-color: var(--accent); }
+  .search-main::placeholder { color: var(--muted); font-size: 14px; }
+  .search-country {
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    padding: 13px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px;
+    border-radius: 6px; outline: none; cursor: pointer; min-width: 140px;
+  }
+  .search-go {
+    background: var(--accent); color: #000; border: none; padding: 13px 26px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 2px;
+    cursor: pointer; border-radius: 6px; transition: opacity .2s;
+  }
+  .search-go:hover { opacity: .85; }
+
+  /* BROWSE PANEL */
+  .browse-panel {
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .browse-toggle {
+    display: flex; align-items: center; gap: 8px;
+    background: transparent; border: none; color: var(--muted2);
+    font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 400;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 14px 36px; cursor: pointer; width: 100%; text-align: left;
+    transition: color .15s;
+  }
+  .browse-toggle:hover { color: var(--text); }
+  .browse-toggle .chevron {
+    transition: transform .2s; margin-left: 2px; flex-shrink: 0;
+    color: var(--muted);
+  }
+  .browse-toggle.open .chevron { transform: rotate(180deg); }
+  .browse-body {
+    padding: 16px 36px 24px;
+    display: flex; gap: 32px; align-items: flex-start;
+  }
+  .map-wrap {
+    display: grid;
+    grid-template-columns: repeat(12, 36px);
+    grid-template-rows: repeat(8, 36px);
+    gap: 2px;
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .state-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all .12s;
+    width: 36px; height: 36px;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .state-btn:hover { background: var(--surface); border-color: var(--muted2); color: var(--text); }
+  .state-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .month-wrap {
+    display: flex; flex-direction: column; gap: 10px;
+    min-width: 160px; padding-top: 4px;
+  }
+  .month-section-label {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .month-label {
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px;
+    color: var(--accent); line-height: 1;
+  }
+  .month-sublabel {
+    font-size: 10px; color: var(--muted2); margin-top: 2px;
+  }
+  input[type="range"].month-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+    margin: 6px 0;
+    font-size: 16px;
+  }
+  input[type="range"].month-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 0 3px rgba(232,255,71,0.15);
+  }
+  input[type="range"].month-slider::-moz-range-thumb {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+  }
+  .browse-clear {
+    display: flex; align-items: center; gap: 5px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 10px;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-top: 6px;
+    transition: all .15s;
+  }
+  .browse-clear:hover { color: var(--text); border-color: var(--muted2); }
+
+  /* TOOLBAR */
+  .toolbar {
+    padding: 12px 36px; display: flex; gap: 10px; border-bottom: 1px solid var(--border);
+    align-items: center; flex-wrap: wrap;
+  }
+  .filter-label { font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); }
+  .filter-sel {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 10px; font-family: 'DM Sans', sans-serif; font-size: 16px;
+    border-radius: 4px; cursor: pointer; outline: none;
+  }
+  .filter-sel:focus { border-color: var(--accent); }
+  .date-input {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 10px; font-family: 'DM Sans', sans-serif; font-size: 16px;
+    border-radius: 4px; outline: none;
+  }
+  .date-input:focus { border-color: var(--accent); }
+  .toolbar-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .chip {
+    padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+    font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; transition: all .15s; background: transparent; color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .chip:hover { color: var(--text); border-color: var(--muted2); }
+  .chip.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .view-btns { display: flex; gap: 3px; }
+  .vbtn {
+    background: none; border: 1px solid var(--border); color: var(--muted);
+    padding: 5px 9px; cursor: pointer; font-size: 13px; border-radius: 3px; transition: all .15s;
+  }
+  .vbtn.active { border-color: var(--accent); color: var(--accent); }
+
+  /* LAYOUT */
+  .layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 200px); }
+
+  /* SIDEBAR */
+  .sidebar { border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; max-height: calc(100vh - 200px); position: sticky; top: 60px; align-self: start; }
+  .sb-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .artist-list { list-style: none; }
+  .artist-btn {
+    width: 100%; text-align: left; background: none; border: none; color: var(--text);
+    padding: 8px 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300;
+    cursor: pointer; border-bottom: 1px solid #161616; display: flex; justify-content: space-between;
+    align-items: center; transition: color .15s;
+  }
+  .artist-btn:hover { color: var(--accent); }
+  .artist-btn.active { color: var(--accent); }
+  .acount { font-size: 10px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 10px; color: var(--muted2); }
+  .artist-btn.active .acount { background: var(--accent); border-color: var(--accent); color: #000; }
+
+  /* MAIN */
+  .main-area { padding: 24px 28px; }
+  .results-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .results-count { font-size: 11px; color: var(--muted2); letter-spacing: .5px; }
+  .results-count strong { color: var(--accent); font-weight: 500; font-size: 13px; }
+
+  /* RELEVANCE SPLIT */
+  .maybe-header {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); margin: 24px 0 12px;
+  }
+  .maybe-header::before {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+  .maybe-header::after {
+    content: ''; width: 40px; height: 1px; background: var(--border);
+  }
+  .secondary-list { opacity: 0.65; }
+
+  /* LIST */
+  .ev-list { display: flex; flex-direction: column; gap: 5px; }
+  .ev-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 16px 20px; display: grid; grid-template-columns: 72px 1fr auto 130px;
+    gap: 18px; align-items: center; text-decoration: none; color: inherit;
+    transition: background .12s, border-color .12s; cursor: pointer;
+  }
+  .ev-card:hover { background: #161616; border-color: #2a2a2a; }
+  .ev-date { text-align: center; }
+  .ev-month { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+  .ev-day { font-family: 'Bebas Neue', sans-serif; font-size: 36px; line-height: 1; }
+  .ev-year { font-size: 9px; color: var(--muted2); }
+  .ev-artist { font-family: 'Bebas Neue', sans-serif; font-size: 19px; letter-spacing: .5px; margin-bottom: 2px; }
+  .ev-show { font-size: 12px; color: var(--muted2); font-style: italic; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-loc { font-size: 11px; color: var(--muted2); display: flex; gap: 8px; flex-wrap: wrap; }
+  .ev-venue { color: var(--text); opacity: .65; }
+  .ev-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+  .tag { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }
+  .tag-genre { color: var(--muted2); background: var(--surface2); border: 1px solid var(--border); }
+  .tag-onsale { color: #000; background: var(--accent); }
+  .tag-offsale { color: var(--accent2); background: rgba(255,71,87,.1); border: 1px solid var(--accent2); }
+  .ev-price { text-align: right; }
+  .price-lbl { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+  .price-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; }
+  .ticket-link {
+    display: inline-block; background: transparent; border: 1px solid var(--accent);
+    color: var(--accent); padding: 8px 16px; font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px; letter-spacing: 2px; border-radius: 4px; text-decoration: none;
+    transition: all .15s; text-align: center;
+  }
+  .ticket-link:hover { background: var(--accent); color: #000; }
+
+  /* GRID */
+  .ev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .ev-gcard {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; text-decoration: none; color: inherit; display: block;
+    transition: transform .2s, border-color .2s;
+  }
+  .ev-gcard:hover { transform: translateY(-2px); border-color: #2a2a2a; }
+  .gcard-img { width: 100%; height: 120px; object-fit: cover; background: var(--surface2); display: block; }
+  .gcard-placeholder { width: 100%; height: 120px; background: linear-gradient(135deg,#1a1a1a,#111); display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 44px; color: #2a2a2a; }
+  .gcard-body { padding: 12px 14px; }
+  .gcard-badge { display: inline-block; background: var(--surface2); border-radius: 3px; padding: 3px 7px; font-size: 10px; color: var(--accent); margin-bottom: 6px; letter-spacing: .5px; }
+  .gcard-artist { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gcard-venue { font-size: 11px; color: var(--muted2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
+  .gcard-foot { display: flex; justify-content: space-between; align-items: center; }
+  .gcard-city { font-size: 11px; color: var(--text); opacity: .55; }
+
+  /* TOUR VIEW */
+  .tour-group { margin-bottom: 24px; }
+  .tour-head { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 2px solid var(--accent); margin-bottom: 10px; }
+  .tour-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1.5px; }
+  .tour-cnt { font-size: 10px; background: var(--surface2); border: 1px solid var(--border); padding: 2px 8px; border-radius: 10px; color: var(--muted2); letter-spacing: 1px; }
+  .tour-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tour-pill {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 5px;
+    padding: 8px 12px; text-decoration: none; color: inherit; min-width: 110px;
+    transition: border-color .15s, background .15s; display: block;
+  }
+  .tour-pill:hover { border-color: var(--accent); background: #141414; }
+  .pill-d { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: .5px; color: var(--accent); }
+  .pill-c { font-size: 11px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pill-v { font-size: 10px; color: var(--muted2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* IG SHARE BUTTON */
+  .ig-btn {
+    background: transparent; border: none; color: var(--muted);
+    padding: 4px 6px; cursor: pointer; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    margin-left: auto; transition: color .15s, transform .15s;
+    flex-shrink: 0;
+  }
+  .ig-btn:hover { color: var(--accent); transform: scale(1.1); }
+  .ig-btn svg { display: block; }
+
+  /* STATES */
+  .state-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 70px 40px; text-align: center; }
+  .state-icon { font-size: 44px; margin-bottom: 14px; opacity: .3; }
+  .state-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; margin-bottom: 8px; }
+  .state-sub { font-size: 13px; color: var(--muted2); max-width: 280px; line-height: 1.6; }
+  .setup-card { background: var(--surface2); border: 1px solid #2a2700; border-radius: 8px; padding: 22px 28px; max-width: 420px; margin-top: 22px; text-align: left; }
+  .setup-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; color: var(--accent); margin-bottom: 7px; }
+  .setup-card p { font-size: 12px; color: var(--muted2); line-height: 1.7; margin-bottom: 14px; }
+  .setup-card a { color: var(--accent); }
+  .setup-input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 12px; font-family: 'DM Sans', sans-serif; font-size: 16px; border-radius: 4px; outline: none; margin-bottom: 8px; }
+  .setup-input:focus { border-color: var(--accent); }
+  .setup-input::placeholder { color: var(--muted); font-size: 13px; }
+
+  /* LOADER */
+  .loader { display: flex; align-items: center; gap: 10px; padding: 50px 0; color: var(--muted2); font-size: 12px; letter-spacing: 1px; }
+  .spin { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: sp .7s linear infinite; }
+  @keyframes sp { to { transform: rotate(360deg); } }
+
+  /* PAGINATION */
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 20px 0; border-top: 1px solid var(--border); margin-top: 10px; }
+  .pg-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 7px 12px; border-radius: 4px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 11px; transition: all .15s; }
+  .pg-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .pg-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  .pg-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .pg-info { font-size: 10px; color: var(--muted2); padding: 0 6px; letter-spacing: 1px; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 10px 16px; border-radius: 5px; font-size: 12px; opacity: 0; transform: translateY(8px); transition: all .25s; z-index: 9999; max-width: 280px; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-left-color: var(--accent2); }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    header { padding: 0 16px; }
+    .hero { padding: 32px 16px 24px; }
+    .toolbar, .main-area { padding: 12px 16px; }
+    .ev-card { grid-template-columns: 60px 1fr; }
+    .ev-price, .ticket-link { display: none; }
+    .search-bar { flex-wrap: wrap; }
+    .browse-toggle { padding: 12px 16px; }
+    .browse-body { padding: 12px 16px 20px; flex-direction: column; gap: 20px; }
+    .map-wrap { overflow-x: auto; padding-bottom: 6px; max-width: calc(100vw - 32px); }
+    .month-wrap { width: 100%; }
+    input[type="range"].month-slider { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">STAGESIDE</div>
+    <div class="logo-sub">Concert Tour Tracker</div>
+  </div>
+  <div class="key-bar">
+    <div class="key-status" id="keyDot"></div>
+    <input class="key-input" id="keyInput" type="password" placeholder="Ticketmaster API key..." autocomplete="off">
+    <button class="btn" onclick="saveKey()">Save Key</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">&#9654; Live Events Worldwide</div>
+  <h1 class="hero-title">Every Tour.<br>Every <span>City</span>. Every Show.</h1>
+  <div class="search-bar">
+    <input class="search-main" id="searchInput" type="text" placeholder="Search artist, band, tour name..." onkeydown="if(event.key==='Enter')doSearch()">
+    <select class="search-country" id="countryFilter" onchange="doSearch()">
+      <option value="US">&#127482;&#127480; United States</option>
+      <option value="GB">&#127468;&#127463; United Kingdom</option>
+      <option value="CA">&#127464;&#127462; Canada</option>
+      <option value="AU">&#127462;&#127482; Australia</option>
+      <option value="DE">&#127465;&#127466; Germany</option>
+      <option value="FR">&#127467;&#127479; France</option>
+      <option value="MX">&#127474;&#127485; Mexico</option>
+      <option value="">&#127757; Worldwide</option>
+    </select>
+    <button class="search-go" onclick="doSearch()">SEARCH</button>
+  </div>
+</section>
+
+<!-- BROWSE BY LOCATION PANEL -->
+<div class="browse-panel" id="browsePanel">
+  <button class="browse-toggle" id="browseToggleBtn" onclick="toggleBrowse()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/><path d="M8.5 10.5l1.5 1.5M15.5 10.5l-1.5 1.5"/><path d="M8 17s1.5-2 4-2 4 2 4 2"/></svg>
+    Browse by Location
+    <svg class="chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+  <div class="browse-body" id="browseBody" style="display:none">
+    <div>
+      <div class="month-section-label" style="margin-bottom:8px">US State</div>
+      <div class="map-wrap" id="stateMap"></div>
+    </div>
+    <div class="month-wrap">
+      <div class="month-section-label">Month</div>
+      <div class="month-label" id="monthLabel">—</div>
+      <div class="month-sublabel" id="monthSublabel">Move slider to select</div>
+      <input type="range" class="month-slider" id="monthSlider" min="0" max="23" value="0" oninput="updateMonthSlider(this.value)">
+      <button class="browse-clear" onclick="clearBrowse()">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        Clear filters
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <span class="filter-label">Genre</span>
+  <select class="filter-sel" id="genreFilter" onchange="doSearch()">
+    <option value="">All Music</option>
+    <option value="KZFzniwnSyZfZ7v7nE">Rock</option>
+    <option value="KZFzniwnSyZfZ7v7n1">Pop</option>
+    <option value="KZFzniwnSyZfZ7v7na">Hip-Hop / Rap</option>
+    <option value="KZFzniwnSyZfZ7v7nk">Country</option>
+    <option value="KZFzniwnSyZfZ7v7nW">Electronic / Dance</option>
+    <option value="KZFzniwnSyZfZ7v7nF">R&B / Soul</option>
+    <option value="KZFzniwnSyZfZ7v7nI">Jazz</option>
+    <option value="KZFzniwnSyZfZ7v7nG">Classical</option>
+    <option value="KZFzniwnSyZfZ7v7nb">Latin</option>
+    <option value="KZFzniwnSyZfZ7v7nA">Metal</option>
+    <option value="KZFzniwnSyZfZ7v7nv">Alternative</option>
+    <option value="KZFzniwnSyZfZ7v7nH">Folk</option>
+    <option value="KZFzniwnSyZfZ7v7nJ">Indie</option>
+  </select>
+  <span class="filter-label" style="margin-left:8px">Date From</span>
+  <input type="date" class="date-input" id="dateFrom" onchange="doSearch()">
+  <span class="filter-label">To</span>
+  <input type="date" class="date-input" id="dateTo" onchange="doSearch()">
+  <div class="toolbar-right">
+    <button class="chip active" id="chip-date" onclick="setSort('date')">Date &#8593;</button>
+    <button class="chip" id="chip-name" onclick="setSort('name')">Artist A-Z</button>
+    <button class="chip" id="chip-rel" onclick="setSort('relevance')">Relevance</button>
+    <div class="view-btns" style="margin-left:6px">
+      <button class="vbtn" id="vlist" onclick="setView('list')" title="List">&#9776;</button>
+      <button class="vbtn" id="vgrid" onclick="setView('grid')" title="Grid">&#8862;</button>
+      <button class="vbtn active" id="vtour" onclick="setView('tour')" title="Tour">&#9830;</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sb-title">Quick Search — Artists</div>
+    <ul class="artist-list" id="sbList">
+      <li><button class="artist-btn" onclick="quickSearch('Taylor Swift')">Taylor Swift</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Beyoncé')">Beyoncé</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Coldplay')">Coldplay</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Ed Sheeran')">Ed Sheeran</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Drake')">Drake</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Billie Eilish')">Billie Eilish</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('The Weeknd')">The Weeknd</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Post Malone')">Post Malone</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Bad Bunny')">Bad Bunny</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Olivia Rodrigo')">Olivia Rodrigo</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Kendrick Lamar')">Kendrick Lamar</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Bruno Mars')">Bruno Mars</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Harry Styles')">Harry Styles</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Dua Lipa')">Dua Lipa</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Sabrina Carpenter')">Sabrina Carpenter</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Chappell Roan')">Chappell Roan</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('SZA')">SZA</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Tyler the Creator')">Tyler the Creator</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Zach Bryan')">Zach Bryan</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Morgan Wallen')">Morgan Wallen</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Metallica')">Metallica</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Green Day')">Green Day</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Radiohead')">Radiohead</button></li>
+      <li><button class="artist-btn" onclick="quickSearch('Arctic Monkeys')">Arctic Monkeys</button></li>
+    </ul>
+  </aside>
+
+  <main class="main-area" id="mainArea">
+    <div class="state-box" id="welcomeState">
+      <div class="state-icon">&#127928;</div>
+      <div class="state-title">Enter Your API Key</div>
+      <p class="state-sub">Paste your Ticketmaster API key at the top to start browsing live concerts worldwide.</p>
+      <div class="setup-card">
+        <h3>Get a Free Key</h3>
+        <p>Register at <a href="https://developer-acct.ticketmaster.com/user/register" target="_blank">developer.ticketmaster.com</a> — free, instant access. 5,000 API calls/day included.</p>
+        <input class="setup-input" id="setupInput" type="text" placeholder="Paste API key here...">
+        <button class="btn" style="width:100%;padding:10px" onclick="saveKeyFromSetup()">Connect &amp; Explore &#8594;</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // STATE
+  let currentView = 'tour';
+  let currentSort = 'date,asc';
+  let currentPage = 0;
+  let lastParams = {};
+  let cachedData = null;
+  let keyConnected = false;
+  let selectedState = null;
+  let selectedMonth = null;
+  let tourDataStore = [];
+
+  // US STATE TILE MAP — 12-col × 8-row cartogram
+  const US_STATES = [
+    // Row 1
+    {code:'AK', col:1, row:1}, {code:'ME', col:12, row:1},
+    // Row 2
+    {code:'WA', col:1, row:2}, {code:'MT', col:3, row:2}, {code:'ND', col:5, row:2},
+    {code:'MN', col:6, row:2}, {code:'WI', col:7, row:2}, {code:'MI', col:8, row:2},
+    {code:'VT', col:11, row:2}, {code:'NH', col:12, row:2},
+    // Row 3
+    {code:'OR', col:1, row:3}, {code:'ID', col:2, row:3}, {code:'WY', col:3, row:3},
+    {code:'SD', col:5, row:3}, {code:'IA', col:6, row:3}, {code:'IL', col:7, row:3},
+    {code:'IN', col:8, row:3}, {code:'OH', col:9, row:3}, {code:'PA', col:10, row:3},
+    {code:'NY', col:11, row:3}, {code:'MA', col:12, row:3},
+    // Row 4
+    {code:'CA', col:1, row:4}, {code:'NV', col:2, row:4}, {code:'UT', col:3, row:4},
+    {code:'CO', col:4, row:4}, {code:'NE', col:5, row:4}, {code:'MO', col:6, row:4},
+    {code:'KY', col:7, row:4}, {code:'WV', col:8, row:4}, {code:'VA', col:9, row:4},
+    {code:'MD', col:10, row:4}, {code:'NJ', col:11, row:4}, {code:'RI', col:12, row:4},
+    // Row 5
+    {code:'AZ', col:2, row:5}, {code:'NM', col:3, row:5}, {code:'KS', col:5, row:5},
+    {code:'AR', col:6, row:5}, {code:'TN', col:7, row:5}, {code:'NC', col:8, row:5},
+    {code:'SC', col:9, row:5}, {code:'DE', col:10, row:5}, {code:'CT', col:11, row:5},
+    // Row 6
+    {code:'OK', col:5, row:6}, {code:'LA', col:6, row:6}, {code:'MS', col:7, row:6},
+    {code:'AL', col:8, row:6}, {code:'GA', col:9, row:6}, {code:'FL', col:10, row:6},
+    // Row 7
+    {code:'TX', col:5, row:7},
+    // Row 8
+    {code:'HI', col:1, row:8},
+  ];
+
+  // Build state map on load
+  (function buildStateMap() {
+    const mapEl = document.getElementById('stateMap');
+    let html = '';
+    for (const s of US_STATES) {
+      html += `<button class="state-btn" data-code="${s.code}"
+        style="grid-column:${s.col};grid-row:${s.row}"
+        onclick="selectState('${s.code}')">${s.code}</button>`;
+    }
+    mapEl.innerHTML = html;
+  })();
+
+  // INIT — check server for existing key
+  (async () => {
+    try {
+      const r = await fetch('/api/status');
+      const d = await r.json();
+      if (d.hasKey) {
+        keyConnected = true;
+        document.getElementById('keyDot').classList.add('connected');
+        document.getElementById('keyInput').placeholder = `Key: ${d.keyPreview} (saved)`;
+        loadDefault();
+      }
+    } catch(e) {}
+  })();
+
+  // Set today as default date from
+  document.getElementById('dateFrom').value = new Date().toISOString().split('T')[0];
+
+  async function saveKey() {
+    const k = document.getElementById('keyInput').value.trim();
+    if (!k) { toast('Enter an API key first', true); return; }
+    await saveKeyToServer(k);
+    document.getElementById('keyInput').value = '';
+    document.getElementById('keyInput').placeholder = `Key: ${k.substring(0,6)}... (saved)`;
+  }
+
+  async function saveKeyFromSetup() {
+    const k = document.getElementById('setupInput').value.trim();
+    if (!k) { toast('Enter an API key first', true); return; }
+    document.getElementById('keyInput').value = k;
+    await saveKeyToServer(k);
+    document.getElementById('keyInput').value = '';
+    document.getElementById('keyInput').placeholder = `Key: ${k.substring(0,6)}... (saved)`;
+  }
+
+  async function saveKeyToServer(k) {
+    try {
+      const r = await fetch('/api/save-key', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ apiKey: k }) });
+      const d = await r.json();
+      if (d.success) {
+        keyConnected = true;
+        document.getElementById('keyDot').classList.add('connected');
+        toast('API key saved!');
+        loadDefault();
+      }
+    } catch(e) { toast('Failed to save key', true); }
+  }
+
+  function loadDefault() {
+    currentPage = 0;
+    fetchEvents({ classificationName: 'music', sort: currentSort, countryCode: 'US', includeTest: 'no' });
+  }
+
+  function setSort(t) {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('chip-' + (t === 'date' ? 'date' : t === 'name' ? 'name' : 'rel')).classList.add('active');
+    currentSort = t === 'date' ? 'date,asc' : t === 'name' ? 'name,asc' : 'relevance,desc';
+    doSearch();
+  }
+
+  function setView(v) {
+    currentView = v;
+    document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
+    document.getElementById('v' + v).classList.add('active');
+    if (cachedData) renderData(cachedData);
+  }
+
+  function quickSearch(name) {
+    document.getElementById('searchInput').value = name;
+    document.querySelectorAll('.artist-btn').forEach(b => { b.classList.toggle('active', b.textContent.trim() === name); });
+    doSearch();
+  }
+
+  function doSearch() {
+    if (!keyConnected) { toast('Save your API key first', true); return; }
+    currentPage = 0;
+    const keyword = document.getElementById('searchInput').value.trim();
+    const country = document.getElementById('countryFilter').value;
+    const genre = document.getElementById('genreFilter').value;
+    const df = document.getElementById('dateFrom').value;
+    const dt = document.getElementById('dateTo').value;
+
+    const p = { sort: currentSort, includeTest: 'no' };
+    if (keyword) p.keyword = keyword;
+    else p.classificationName = 'music';
+    if (country) p.countryCode = country;
+    if (genre) p.genreId = genre;
+    if (df) p.startDateTime = df + 'T00:00:00Z';
+    if (dt) p.endDateTime = dt + 'T23:59:59Z';
+
+    lastParams = p;
+    fetchEvents(p, 0);
+  }
+
+  async function fetchEvents(params, page = 0) {
+    showLoader();
+    const qs = new URLSearchParams({ ...params, size: 20, page });
+    try {
+      const r = await fetch(`/api/events?${qs}`);
+      const data = await r.json();
+      if (data.error) { showError(data.error); return; }
+      if (data.fault) { showError('Invalid API key or quota exceeded. Check your key.'); return; }
+      cachedData = data;
+      renderData(data);
+    } catch(e) {
+      showError('Network error. Make sure the server is running.');
+    }
+  }
+
+  // ─── RELEVANCE SCORING ───────────────────────────────────────────────────────
+  function scoreRelevance(event, keyword) {
+    const kw = keyword.toLowerCase().trim();
+    const attraction = (event._embedded?.attractions?.[0]?.name || '').toLowerCase();
+    const evName = (event.name || '').toLowerCase();
+    if (attraction === kw) return 3;
+    if (attraction.startsWith(kw) || attraction.includes(kw)) return 2;
+    if (evName.includes(kw)) return 1;
+    return 0;
+  }
+
+  function renderData(data) {
+    const events = data._embedded?.events || [];
+    const total = data.page?.totalElements || 0;
+
+    if (!events.length) {
+      document.getElementById('mainArea').innerHTML = `<div class="state-box"><div class="state-icon">&#128269;</div><div class="state-title">No Events Found</div><p class="state-sub">Try a different search, country, or date range.</p></div>`;
+      return;
+    }
+
+    // Split into primary / secondary based on keyword relevance
+    let primary = events, secondary = [];
+    if (lastParams.keyword) {
+      primary = []; secondary = [];
+      for (const e of events) {
+        const score = scoreRelevance(e, lastParams.keyword);
+        if (score >= 2) primary.push(e);
+        else secondary.push(e);
+      }
+      // Avoid an empty primary list — fall back to showing all as primary
+      if (primary.length === 0) { primary = events; secondary = []; }
+    }
+
+    // Reset tour data store for fresh index assignment
+    tourDataStore = [];
+
+    let html = `<div class="results-meta"><div class="results-count"><strong>${total.toLocaleString()}</strong> events found</div></div>`;
+
+    if (currentView === 'list') {
+      html += renderList(primary);
+      if (secondary.length > 0) {
+        html += `<div class="maybe-header">Maybe what you're looking for...</div>`;
+        html += `<div class="secondary-list">${renderList(secondary)}</div>`;
+      }
+    } else if (currentView === 'grid') {
+      html += renderGrid(primary);
+      if (secondary.length > 0) {
+        html += `<div class="maybe-header">Maybe what you're looking for...</div>`;
+        html += `<div class="secondary-list">${renderGrid(secondary)}</div>`;
+      }
+    } else {
+      html += renderTour(primary);
+      if (secondary.length > 0) {
+        html += `<div class="maybe-header">Maybe what you're looking for...</div>`;
+        html += `<div class="secondary-list">${renderTour(secondary)}</div>`;
+      }
+    }
+
+    html += '<div id="pgArea"></div>';
+    document.getElementById('mainArea').innerHTML = html;
+    renderPagination(data.page);
+  }
+
+  function renderList(events) {
+    let h = '<div class="ev-list">';
+    for (const e of events) {
+      const {mon,day,yr} = fmtDate(e.dates?.start?.localDate);
+      const v = e._embedded?.venues?.[0];
+      const city = v?.city?.name || '';
+      const state = v?.state?.stateCode || v?.country?.countryCode || '';
+      const venue = v?.name || '';
+      const artist = e._embedded?.attractions?.[0]?.name || e.name;
+      const showName = e.name !== artist ? e.name : '';
+      const price = e.priceRanges ? `$${Math.floor(e.priceRanges[0].min)}+` : '';
+      const url = e.url || '#';
+      const genre = e.classifications?.[0]?.genre?.name;
+      const status = e.dates?.status?.code;
+      let badge = '';
+      if (status === 'offsale') badge = `<span class="tag tag-offsale">Sold Out</span>`;
+      else if (status === 'onsale') badge = `<span class="tag tag-onsale">On Sale</span>`;
+
+      h += `<a class="ev-card" href="${url}" target="_blank" rel="noopener">
+        <div class="ev-date"><div class="ev-month">${mon}</div><div class="ev-day">${day}</div><div class="ev-year">${yr}</div></div>
+        <div>
+          <div class="ev-artist">${artist}</div>
+          ${showName ? `<div class="ev-show">${showName}</div>` : ''}
+          <div class="ev-loc"><span class="ev-venue">${venue}</span><span>${city}${state?', '+state:''}</span></div>
+          <div class="ev-tags">${genre&&genre!=='Undefined'?`<span class="tag tag-genre">${genre}</span>`:''}${badge}</div>
+        </div>
+        <div class="ev-price">${price?`<div class="price-lbl">From</div><div class="price-val">${price}</div>`:''}</div>
+        <a class="ticket-link" href="${url}" target="_blank" rel="noopener">Get Tickets</a>
+      </a>`;
+    }
+    return h + '</div>';
+  }
+
+  function renderGrid(events) {
+    let h = '<div class="ev-grid">';
+    for (const e of events) {
+      const {dateStr} = fmtDate(e.dates?.start?.localDate);
+      const v = e._embedded?.venues?.[0];
+      const city = v?.city?.name || '';
+      const state = v?.state?.stateCode || '';
+      const artist = e._embedded?.attractions?.[0]?.name || e.name;
+      const url = e.url || '#';
+      const img = getBestImg(e);
+      h += `<a class="ev-gcard" href="${url}" target="_blank" rel="noopener">
+        ${img ? `<img class="gcard-img" src="${img}" alt="${artist}" loading="lazy">` : `<div class="gcard-placeholder">${artist.charAt(0)}</div>`}
+        <div class="gcard-body">
+          <div class="gcard-badge">${dateStr}</div>
+          <div class="gcard-artist">${artist}</div>
+          <div class="gcard-venue">${v?.name||''}</div>
+          <div class="gcard-foot"><span class="gcard-city">${city}${state?', '+state:''}</span><span class="ticket-link" style="font-size:10px;padding:5px 10px">Tickets &#8594;</span></div>
+        </div>
+      </a>`;
+    }
+    return h + '</div>';
+  }
+
+  function renderTour(events) {
+    const groups = {};
+    for (const e of events) {
+      const artist = e._embedded?.attractions?.[0]?.name || e.name;
+      if (!groups[artist]) groups[artist] = [];
+      groups[artist].push(e);
+    }
+
+    const shareSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`;
+
+    let h = '';
+    for (const [artist, shows] of Object.entries(groups)) {
+      const idx = tourDataStore.length;
+      tourDataStore.push({ artist, shows });
+
+      h += `<div class="tour-group">
+        <div class="tour-head">
+          <span class="tour-name">${artist}</span>
+          <span class="tour-cnt">${shows.length} show${shows.length>1?'s':''}</span>
+          <button class="ig-btn" onclick="generateIGPost(${idx})" title="Generate Instagram post">${shareSVG}</button>
+        </div>
+        <div class="tour-pills">`;
+      for (const s of shows) {
+        const v = s._embedded?.venues?.[0];
+        const {dateStr} = fmtDate(s.dates?.start?.localDate);
+        const city = v?.city?.name || '';
+        const state = v?.state?.stateCode || '';
+        h += `<a class="tour-pill" href="${s.url||'#'}" target="_blank" rel="noopener">
+          <div class="pill-d">${dateStr}</div>
+          <div class="pill-c">${city}${state?', '+state:''}</div>
+          <div class="pill-v">${v?.name||''}</div>
+        </a>`;
+      }
+      h += '</div></div>';
+    }
+    return h;
+  }
+
+  function renderPagination(page) {
+    if (!page || page.totalPages <= 1) return;
+    const area = document.getElementById('pgArea');
+    if (!area) return;
+    const total = page.totalPages, cur = page.number;
+    let h = '<div class="pagination">';
+    h += `<button class="pg-btn" onclick="goPage(${cur-1})" ${cur===0?'disabled':''}>&larr; Prev</button>`;
+    const s = Math.max(0,cur-2), e = Math.min(total-1,cur+2);
+    if (s>0) h += `<button class="pg-btn" onclick="goPage(0)">1</button><span class="pg-info">&hellip;</span>`;
+    for (let i=s;i<=e;i++) h += `<button class="pg-btn ${i===cur?'active':''}" onclick="goPage(${i})">${i+1}</button>`;
+    if (e<total-1) h += `<span class="pg-info">&hellip;</span><button class="pg-btn" onclick="goPage(${total-1})">${total}</button>`;
+    h += `<button class="pg-btn" onclick="goPage(${cur+1})" ${cur>=total-1?'disabled':''}>Next &rarr;</button>`;
+    h += `<span class="pg-info">${cur+1}/${total} pages</span></div>`;
+    area.innerHTML = h;
+  }
+
+  function goPage(p) {
+    currentPage = p;
+    fetchEvents({...lastParams}, p);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // ─── BROWSE BY LOCATION ───────────────────────────────────────────────────────
+  function toggleBrowse() {
+    const body = document.getElementById('browseBody');
+    const btn = document.getElementById('browseToggleBtn');
+    const isOpen = body.style.display !== 'none';
+    body.style.display = isOpen ? 'none' : 'flex';
+    btn.classList.toggle('open', !isOpen);
+  }
+
+  function selectState(code) {
+    if (selectedState === code) {
+      selectedState = null;
+      document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+    } else {
+      selectedState = code;
+      document.querySelectorAll('.state-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.code === code);
+      });
+    }
+    browseSearch();
+  }
+
+  function updateMonthSlider(val) {
+    const now = new Date();
+    const d = new Date(now.getFullYear(), now.getMonth() + parseInt(val), 1);
+    const monthNames = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const label = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+    document.getElementById('monthLabel').textContent = label;
+    document.getElementById('monthSublabel').textContent = '';
+    selectedMonth = { year: d.getFullYear(), month: d.getMonth() + 1 };
+    browseSearch();
+  }
+
+  function browseSearch() {
+    if (!keyConnected) { toast('Save your API key first', true); return; }
+
+    // Clear keyword search to avoid conflict
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
+
+    currentPage = 0;
+    const genre = document.getElementById('genreFilter').value;
+    const p = { sort: currentSort, includeTest: 'no', countryCode: 'US', classificationName: 'music' };
+    if (selectedState) p.stateCode = selectedState;
+    if (selectedMonth) {
+      const { year, month } = selectedMonth;
+      const mm = String(month).padStart(2, '0');
+      const lastDay = new Date(year, month, 0).getDate();
+      p.startDateTime = `${year}-${mm}-01T00:00:00Z`;
+      p.endDateTime = `${year}-${mm}-${lastDay}T23:59:59Z`;
+    } else {
+      // Default: from today onwards
+      p.startDateTime = new Date().toISOString().split('T')[0] + 'T00:00:00Z';
+    }
+    if (genre) p.genreId = genre;
+
+    lastParams = p;
+    fetchEvents(p, 0);
+  }
+
+  function clearBrowse() {
+    selectedState = null;
+    selectedMonth = null;
+    document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('monthSlider').value = '0';
+    document.getElementById('monthLabel').textContent = '—';
+    document.getElementById('monthSublabel').textContent = 'Move slider to select';
+    loadDefault();
+  }
+
+  // ─── IG POST GENERATOR ────────────────────────────────────────────────────────
+  async function generateIGPost(idx) {
+    const { artist: artistName, shows } = tourDataStore[idx];
+    if (!artistName) return;
+
+    toast('Generating post...');
+
+    try {
+      await document.fonts.ready;
+      await Promise.all([
+        document.fonts.load('96px "Bebas Neue"'),
+        document.fonts.load('400 28px "DM Sans"'),
+      ]);
+    } catch(e) { /* proceed anyway */ }
+
+    // Filter to next 6 months from today
+    const now = new Date();
+    const cutoff = new Date(now.getFullYear(), now.getMonth() + 6, now.getDate());
+    const upcoming = shows.filter(s => {
+      const d = s.dates?.start?.localDate;
+      if (!d) return true;
+      const sd = new Date(d + 'T12:00:00');
+      return sd >= now && sd <= cutoff;
+    });
+    const displayShows = (upcoming.length > 0 ? upcoming : shows).slice(0, 12);
+
+    const SIZE = 1080;
+    const canvas = document.createElement('canvas');
+    canvas.width = SIZE;
+    canvas.height = SIZE;
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, SIZE, SIZE);
+
+    // Accent bar — top
+    ctx.fillStyle = '#e8ff47';
+    ctx.fillRect(0, 0, SIZE, 8);
+
+    // Subtle grid lines for texture
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < SIZE; i += 60) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, SIZE); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(SIZE, i); ctx.stroke();
+    }
+
+    // "STAGESIDE" small label
+    ctx.font = '500 22px "DM Sans"';
+    ctx.fillStyle = '#333';
+    ctx.letterSpacing = '4px';
+    ctx.textAlign = 'center';
+    ctx.fillText('STAGESIDE', SIZE / 2, 56);
+
+    // Artist name
+    ctx.font = '96px "Bebas Neue"';
+    ctx.fillStyle = '#f0f0f0';
+    ctx.letterSpacing = '2px';
+    ctx.textAlign = 'center';
+    ctx.fillText(artistName.toUpperCase(), SIZE / 2, 186);
+
+    // "UPCOMING SHOWS" label
+    ctx.font = '500 22px "DM Sans"';
+    ctx.fillStyle = '#e8ff47';
+    ctx.letterSpacing = '6px';
+    ctx.fillText('UPCOMING SHOWS', SIZE / 2, 240);
+
+    // Divider
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(80, 262);
+    ctx.lineTo(SIZE - 80, 262);
+    ctx.stroke();
+
+    // Show rows
+    const ROW_HEIGHT = 62;
+    const startY = 306;
+    const LIME = '#e8ff47';
+
+    ctx.letterSpacing = '0px';
+    for (let i = 0; i < displayShows.length; i++) {
+      const s = displayShows[i];
+      const v = s._embedded?.venues?.[0];
+      const city = v?.city?.name || '';
+      const state = v?.state?.stateCode || '';
+      const venue = v?.name || '';
+      const {mon, day, yr} = fmtDate(s.dates?.start?.localDate);
+      const dateStr = `${mon} ${day}`;
+
+      const y = startY + i * ROW_HEIGHT;
+
+      // Date
+      ctx.font = '44px "Bebas Neue"';
+      ctx.fillStyle = LIME;
+      ctx.textAlign = 'left';
+      ctx.fillText(dateStr, 90, y);
+
+      // Year (smaller, muted)
+      ctx.font = '24px "Bebas Neue"';
+      ctx.fillStyle = '#555';
+      ctx.fillText(String(yr), 90, y + 24);
+
+      // City + state
+      ctx.font = '400 26px "DM Sans"';
+      ctx.fillStyle = '#f0f0f0';
+      ctx.fillText(`${city}${state ? ', ' + state : ''}`, 240, y);
+
+      // Venue
+      ctx.font = '300 20px "DM Sans"';
+      ctx.fillStyle = '#555';
+      // Truncate venue name if too long
+      let venueName = venue;
+      if (ctx.measureText(venueName).width > 700) {
+        while (ctx.measureText(venueName + '…').width > 700 && venueName.length > 0) {
+          venueName = venueName.slice(0, -1);
+        }
+        venueName += '…';
+      }
+      ctx.fillText(venueName, 240, y + 28);
+
+      // Row separator
+      if (i < displayShows.length - 1) {
+        ctx.strokeStyle = '#1a1a1a';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(80, y + ROW_HEIGHT - 8);
+        ctx.lineTo(SIZE - 80, y + ROW_HEIGHT - 8);
+        ctx.stroke();
+      }
+    }
+
+    // Bottom accent bar
+    ctx.fillStyle = '#e8ff47';
+    ctx.fillRect(0, SIZE - 6, SIZE, 6);
+
+    // Bottom watermark
+    ctx.font = '300 18px "DM Sans"';
+    ctx.fillStyle = '#2a2a2a';
+    ctx.letterSpacing = '3px';
+    ctx.textAlign = 'center';
+    ctx.fillText('stageside.ihsan.build', SIZE / 2, SIZE - 20);
+
+    canvas.toBlob(blob => {
+      if (!blob) { toast('Could not generate image', true); return; }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stageside-${artistName.replace(/\s+/g, '-').toLowerCase()}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast('Post downloaded!');
+    }, 'image/png');
+  }
+
+  // ─── HELPERS ──────────────────────────────────────────────────────────────────
+  function fmtDate(d) {
+    if (!d) return {mon:'—',day:'—',yr:'—',dateStr:'TBA'};
+    const dt = new Date(d + 'T12:00:00');
+    const ms = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    return { mon: ms[dt.getMonth()], day: String(dt.getDate()).padStart(2,'0'), yr: dt.getFullYear(), dateStr: `${ms[dt.getMonth()]} ${dt.getDate()}, ${dt.getFullYear()}` };
+  }
+
+  function getBestImg(e) {
+    const imgs = e.images || [];
+    return (imgs.find(i=>i.ratio==='16_9'&&i.width>400) || imgs.find(i=>i.width>300))?.url || null;
+  }
+
+  function showLoader() {
+    document.getElementById('mainArea').innerHTML = `<div class="loader"><div class="spin"></div>Searching Ticketmaster&hellip;</div>`;
+  }
+
+  function showError(msg) {
+    document.getElementById('mainArea').innerHTML = `<div class="state-box"><div class="state-icon">&#9888;&#65039;</div><div class="state-title">Something Went Wrong</div><p class="state-sub">${msg}</p></div>`;
+  }
+
+  function toast(msg, isErr=false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (isErr?' error':'') + ' show';
+    setTimeout(()=>t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
