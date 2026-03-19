@@ -497,6 +497,9 @@
   .pg-btn:disabled { opacity: .3; cursor: not-allowed; }
   .pg-info { font-size: 10px; color: var(--muted2); padding: 0 6px; letter-spacing: 1px; }
 
+  /* VERSION FOOTER */
+  .version-footer { text-align: center; padding: 24px 16px 32px; font-size: 10px; letter-spacing: 1.5px; color: var(--muted2); text-transform: uppercase; }
+
   /* TOAST */
   .toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 10px 16px; border-radius: 5px; font-size: 12px; opacity: 0; transform: translateY(8px); transition: all .25s; z-index: 9999; max-width: 280px; }
   .toast.show { opacity: 1; transform: translateY(0); }
@@ -684,6 +687,7 @@
   <main class="main-area" id="mainArea">
     <div class="loader"><div class="spin"></div>Loading shows&hellip;</div>
   </main>
+  <div class="version-footer">v2.4.2</div>
 </div>
 
 <div class="toast" id="toast"></div>

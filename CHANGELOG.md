@@ -1,5 +1,10 @@
 # Stageside Changelog
 
+## v2.4.2 — 2026-03-19
+
+### Added
+- **Version footer** — app version number displayed at the bottom of the page; updates with each release
+
 ## v2.4.1 — 2026-03-19
 
 ### Fixed
