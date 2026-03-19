@@ -1,5 +1,12 @@
 # Stageside Changelog
 
+## v2.1.0 — 2026-03-19
+
+### Changed
+- **Vercel deployment**: Converted Node.js HTTP server to Vercel serverless functions. API routes (`/api/events`, `/api/attractions`, `/api/venues`) are now in `api/` and run as serverless functions on Vercel.
+- **API key removed from UI**: Ticketmaster API key is now injected server-side via the `TM_API_KEY` environment variable. Users no longer see a key input field — the app loads immediately on open.
+- Added `vercel.json` to serve `public/` as the static output directory.
+
 ## v2.0.0 — 2026-03-19
 
 ### Added

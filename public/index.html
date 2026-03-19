@@ -31,16 +31,6 @@
   }
   .logo { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 4px; color: var(--accent); line-height: 1; }
   .logo-sub { font-size: 9px; letter-spacing: 2.5px; color: var(--muted2); font-family: 'DM Sans', sans-serif; font-weight: 300; text-transform: uppercase; }
-  .key-bar { display: flex; align-items: center; gap: 8px; }
-  .key-input {
-    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-    padding: 7px 12px; font-family: 'DM Sans', sans-serif; font-size: 16px;
-    border-radius: 4px; width: 240px; outline: none; transition: border-color .2s;
-  }
-  .key-input:focus { border-color: var(--accent); }
-  .key-input::placeholder { color: var(--muted); font-size: 12px; }
-  .key-status { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: background .3s; }
-  .key-status.connected { background: #44ff88; box-shadow: 0 0 6px #44ff88; }
   .btn {
     background: var(--accent); color: #000; border: none; padding: 7px 14px;
     font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 11px;
@@ -405,13 +395,6 @@
   .state-icon { font-size: 44px; margin-bottom: 14px; opacity: .3; }
   .state-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 2px; margin-bottom: 8px; }
   .state-sub { font-size: 13px; color: var(--muted2); max-width: 280px; line-height: 1.6; }
-  .setup-card { background: var(--surface2); border: 1px solid #2a2700; border-radius: 8px; padding: 22px 28px; max-width: 420px; margin-top: 22px; text-align: left; }
-  .setup-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; color: var(--accent); margin-bottom: 7px; }
-  .setup-card p { font-size: 12px; color: var(--muted2); line-height: 1.7; margin-bottom: 14px; }
-  .setup-card a { color: var(--accent); }
-  .setup-input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 12px; font-family: 'DM Sans', sans-serif; font-size: 16px; border-radius: 4px; outline: none; margin-bottom: 8px; }
-  .setup-input:focus { border-color: var(--accent); }
-  .setup-input::placeholder { color: var(--muted); font-size: 13px; }
 
   /* LOADER */
   .loader { display: flex; align-items: center; gap: 10px; padding: 50px 0; color: var(--muted2); font-size: 12px; letter-spacing: 1px; }
@@ -465,11 +448,6 @@
   <div>
     <div class="logo">STAGESIDE</div>
     <div class="logo-sub">Concert Tour Tracker</div>
-  </div>
-  <div class="key-bar">
-    <div class="key-status" id="keyDot"></div>
-    <input class="key-input" id="keyInput" type="password" placeholder="Ticketmaster API key..." autocomplete="off">
-    <button class="btn" onclick="saveKey()">Save Key</button>
   </div>
 </header>
 
@@ -606,17 +584,7 @@
   </aside>
 
   <main class="main-area" id="mainArea">
-    <div class="state-box" id="welcomeState">
-      <div class="state-icon">&#127928;</div>
-      <div class="state-title">Enter Your API Key</div>
-      <p class="state-sub">Paste your Ticketmaster API key at the top to start browsing live concerts worldwide.</p>
-      <div class="setup-card">
-        <h3>Get a Free Key</h3>
-        <p>Register at <a href="https://developer-acct.ticketmaster.com/user/register" target="_blank">developer.ticketmaster.com</a> — free, instant access. 5,000 API calls/day included.</p>
-        <input class="setup-input" id="setupInput" type="text" placeholder="Paste API key here...">
-        <button class="btn" style="width:100%;padding:10px" onclick="saveKeyFromSetup()">Connect &amp; Explore &#8594;</button>
-      </div>
-    </div>
+    <div class="loader"><div class="spin"></div>Loading shows&hellip;</div>
   </main>
 </div>
 
@@ -629,7 +597,6 @@
   let currentPage = 0;
   let lastParams = {};
   let cachedData = null;
-  let keyConnected = false;
   let selectedState = null;
   let selectedMonth = null;
   let tourDataStore = [];
@@ -737,18 +704,7 @@
   })();
 
   // ─── INIT ─────────────────────────────────────────────────────────────────────
-  (async () => {
-    try {
-      const r = await fetch('/api/status');
-      const d = await r.json();
-      if (d.hasKey) {
-        keyConnected = true;
-        document.getElementById('keyDot').classList.add('connected');
-        document.getElementById('keyInput').placeholder = `Key: ${d.keyPreview} (saved)`;
-        loadDefault();
-      }
-    } catch(e) {}
-  })();
+  loadDefault();
 
   // Mobile hero collapse on scroll
   window.addEventListener('scroll', () => {
@@ -757,36 +713,6 @@
     if (!hero) return;
     hero.classList.toggle('compact', window.scrollY > 50);
   }, { passive: true });
-
-  async function saveKey() {
-    const k = document.getElementById('keyInput').value.trim();
-    if (!k) { toast('Enter an API key first', true); return; }
-    await saveKeyToServer(k);
-    document.getElementById('keyInput').value = '';
-    document.getElementById('keyInput').placeholder = `Key: ${k.substring(0,6)}... (saved)`;
-  }
-
-  async function saveKeyFromSetup() {
-    const k = document.getElementById('setupInput').value.trim();
-    if (!k) { toast('Enter an API key first', true); return; }
-    document.getElementById('keyInput').value = k;
-    await saveKeyToServer(k);
-    document.getElementById('keyInput').value = '';
-    document.getElementById('keyInput').placeholder = `Key: ${k.substring(0,6)}... (saved)`;
-  }
-
-  async function saveKeyToServer(k) {
-    try {
-      const r = await fetch('/api/save-key', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ apiKey: k }) });
-      const d = await r.json();
-      if (d.success) {
-        keyConnected = true;
-        document.getElementById('keyDot').classList.add('connected');
-        toast('API key saved!');
-        loadDefault();
-      }
-    } catch(e) { toast('Failed to save key', true); }
-  }
 
   function loadDefault() {
     currentPage = 0;
@@ -870,7 +796,6 @@
 
   // ─── NEAR ME ──────────────────────────────────────────────────────────────────
   function nearMe() {
-    if (!keyConnected) { toast('Save your API key first', true); return; }
 
     if (nearMeActive) {
       nearMeActive = false;
@@ -915,7 +840,6 @@
 
   // ─── SEARCH ───────────────────────────────────────────────────────────────────
   function doSearch() {
-    if (!keyConnected) { toast('Save your API key first', true); return; }
     if (currentView === 'feed') {
       setView('tour');
     }
@@ -1337,7 +1261,6 @@
   }
 
   function browseSearch() {
-    if (!keyConnected) { toast('Save your API key first', true); return; }
     document.getElementById('searchInput').value = '';
     document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
 
