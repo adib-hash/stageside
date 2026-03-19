@@ -1,5 +1,12 @@
 # Stageside Changelog
 
+## v2.4.1 — 2026-03-19
+
+### Fixed
+- **Mobile hero scroll lag** — removed scroll-based hero re-expansion, which caused a layout reflow on every scroll-up gesture. Hero now collapses once (at 80px scroll) and stays compact; tapping the logo (goHome) re-expands it explicitly
+- **Removed `padding` transition on hero** — `transition: padding .2s ease` triggered full layout reflow on mobile; collapse is now instant (imperceptible at 80px scroll depth)
+- **Removed `backdrop-filter: blur` on mobile header** — replaced with fully opaque background on mobile to eliminate GPU compositing cost on scroll
+
 ## v2.4.0 — 2026-03-19
 
 ### Changed
