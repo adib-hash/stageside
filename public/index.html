@@ -55,15 +55,17 @@
   .hero {
     padding: 48px 36px 32px; border-bottom: 1px solid var(--border);
     position: relative; overflow: hidden;
+    transition: padding .25s ease;
   }
   .hero::after {
     content: 'LIVE'; position: absolute;
     font-family: 'Bebas Neue', sans-serif; font-size: 260px; letter-spacing: -10px;
     color: rgba(255,255,255,.025); right: -20px; top: -30px; line-height: 1;
     pointer-events: none; user-select: none;
+    transition: opacity .25s;
   }
-  .hero-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 1px; line-height: 1; margin-bottom: 28px; }
+  .hero-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; transition: all .2s; }
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 1px; line-height: 1; margin-bottom: 28px; transition: all .2s; }
   .hero-title span { color: var(--accent); }
   .search-bar { display: flex; gap: 10px; max-width: 720px; position: relative; z-index: 1; }
   .search-main {
@@ -84,6 +86,22 @@
     cursor: pointer; border-radius: 6px; transition: opacity .2s;
   }
   .search-go:hover { opacity: .85; }
+
+  /* NEAR ME BUTTON */
+  .near-btn {
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted2);
+    padding: 13px 14px; border-radius: 6px; cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .near-btn:hover { border-color: var(--muted2); color: var(--text); }
+  .near-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.08); }
+  .near-btn svg { display: block; }
+
+  /* HERO COMPACT (mobile scroll) */
+  .hero.compact { padding: 10px 16px; }
+  .hero.compact .hero-eyebrow { display: none; }
+  .hero.compact .hero-title { display: none; }
+  .hero.compact::after { opacity: 0; }
 
   /* BROWSE PANEL */
   .browse-panel {
@@ -218,26 +236,63 @@
   .vbtn {
     background: none; border: 1px solid var(--border); color: var(--muted);
     padding: 5px 9px; cursor: pointer; font-size: 13px; border-radius: 3px; transition: all .15s;
+    display: flex; align-items: center; justify-content: center;
   }
   .vbtn.active { border-color: var(--accent); color: var(--accent); }
+
+  /* DATE CHIPS ROW */
+  .date-chips-row {
+    display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+    margin-left: 8px;
+  }
+  .custom-dates-row {
+    padding: 8px 36px 12px;
+    display: flex; gap: 8px; align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
 
   /* LAYOUT */
   .layout { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 200px); }
 
   /* SIDEBAR */
   .sidebar { border-right: 1px solid var(--border); padding: 20px; overflow-y: auto; max-height: calc(100vh - 200px); position: sticky; top: 60px; align-self: start; }
-  .sb-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .sb-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+  .sb-badge { background: var(--accent); color: #000; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 10px; letter-spacing: 0; }
+  .sb-divider { height: 1px; background: var(--border); margin: 14px 0; }
   .artist-list { list-style: none; }
+  .artist-item { display: flex; align-items: center; border-bottom: 1px solid #161616; }
   .artist-btn {
-    width: 100%; text-align: left; background: none; border: none; color: var(--text);
+    flex: 1; text-align: left; background: none; border: none; color: var(--text);
     padding: 8px 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300;
-    cursor: pointer; border-bottom: 1px solid #161616; display: flex; justify-content: space-between;
+    cursor: pointer; display: flex; justify-content: space-between;
     align-items: center; transition: color .15s;
   }
   .artist-btn:hover { color: var(--accent); }
   .artist-btn.active { color: var(--accent); }
   .acount { font-size: 10px; background: var(--surface2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 10px; color: var(--muted2); }
   .artist-btn.active .acount { background: var(--accent); border-color: var(--accent); color: #000; }
+
+  /* STAR BUTTON */
+  .star-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    padding: 4px 6px; border-radius: 4px; transition: color .15s, transform .15s;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    line-height: 1;
+  }
+  .star-btn:hover { color: var(--accent); transform: scale(1.15); }
+  .star-btn.starred { color: var(--accent); }
+  .star-btn svg { display: block; }
+
+  /* CALENDAR BUTTON */
+  .cal-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--muted); cursor: pointer; padding: 3px 5px; border-radius: 3px;
+    transition: color .15s; vertical-align: middle;
+    background: none; border: none; flex-shrink: 0;
+  }
+  .cal-btn:hover { color: var(--accent); }
+  .cal-btn svg { display: block; }
 
   /* MAIN */
   .main-area { padding: 24px 28px; }
@@ -276,7 +331,7 @@
   .ev-show { font-size: 12px; color: var(--muted2); font-style: italic; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ev-loc { font-size: 11px; color: var(--muted2); display: flex; gap: 8px; flex-wrap: wrap; }
   .ev-venue { color: var(--text); opacity: .65; }
-  .ev-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+  .ev-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; align-items: center; }
   .tag { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }
   .tag-genre { color: var(--muted2); background: var(--surface2); border: 1px solid var(--border); }
   .tag-onsale { color: #000; background: var(--accent); }
@@ -318,12 +373,21 @@
   .tour-pill {
     background: var(--surface); border: 1px solid var(--border); border-radius: 5px;
     padding: 8px 12px; text-decoration: none; color: inherit; min-width: 110px;
-    transition: border-color .15s, background .15s; display: block;
+    transition: border-color .15s, background .15s; display: block; position: relative;
   }
   .tour-pill:hover { border-color: var(--accent); background: #141414; }
   .pill-d { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: .5px; color: var(--accent); }
   .pill-c { font-size: 11px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .pill-v { font-size: 10px; color: var(--muted2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pill-cal {
+    position: absolute; top: 6px; right: 6px;
+    color: var(--muted); cursor: pointer; padding: 2px;
+    transition: color .15s; opacity: 0;
+    background: none; border: none; line-height: 1;
+  }
+  .tour-pill:hover .pill-cal { opacity: 1; }
+  .pill-cal:hover { color: var(--accent) !important; }
+  .pill-cal svg { display: block; }
 
   /* IG SHARE BUTTON */
   .ig-btn {
@@ -367,10 +431,19 @@
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.error { border-left-color: var(--accent2); }
 
+  /* FEED HEADER */
+  .feed-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+  .feed-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--accent); }
+  .feed-sub { font-size: 11px; color: var(--muted2); margin-top: 2px; }
+
   @media (max-width: 860px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { display: none; }
     header { padding: 0 16px; }
+    .key-input { width: 160px; }
     .hero { padding: 32px 16px 24px; }
     .toolbar, .main-area { padding: 12px 16px; }
     .ev-card { grid-template-columns: 60px 1fr; }
@@ -381,6 +454,8 @@
     .map-wrap { overflow-x: auto; padding-bottom: 6px; max-width: calc(100vw - 32px); }
     .month-wrap { width: 100%; }
     input[type="range"].month-slider { width: 100%; }
+    .custom-dates-row { padding: 8px 16px 12px; flex-wrap: wrap; }
+    .date-chips-row { margin-left: 0; }
   }
 </style>
 </head>
@@ -398,7 +473,7 @@
   </div>
 </header>
 
-<section class="hero">
+<section class="hero" id="heroSection">
   <div class="hero-eyebrow">&#9654; Live Events Worldwide</div>
   <h1 class="hero-title">Every Tour.<br>Every <span>City</span>. Every Show.</h1>
   <div class="search-bar">
@@ -413,6 +488,9 @@
       <option value="MX">&#127474;&#127485; Mexico</option>
       <option value="">&#127757; Worldwide</option>
     </select>
+    <button class="near-btn" id="nearMeBtn" onclick="nearMe()" title="Shows near me">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    </button>
     <button class="search-go" onclick="doSearch()">SEARCH</button>
   </div>
 </section>
@@ -451,7 +529,7 @@
     <option value="KZFzniwnSyZfZ7v7na">Hip-Hop / Rap</option>
     <option value="KZFzniwnSyZfZ7v7nk">Country</option>
     <option value="KZFzniwnSyZfZ7v7nW">Electronic / Dance</option>
-    <option value="KZFzniwnSyZfZ7v7nF">R&B / Soul</option>
+    <option value="KZFzniwnSyZfZ7v7nF">R&amp;B / Soul</option>
     <option value="KZFzniwnSyZfZ7v7nI">Jazz</option>
     <option value="KZFzniwnSyZfZ7v7nG">Classical</option>
     <option value="KZFzniwnSyZfZ7v7nb">Latin</option>
@@ -460,50 +538,70 @@
     <option value="KZFzniwnSyZfZ7v7nH">Folk</option>
     <option value="KZFzniwnSyZfZ7v7nJ">Indie</option>
   </select>
-  <span class="filter-label" style="margin-left:8px">Date From</span>
-  <input type="date" class="date-input" id="dateFrom" onchange="doSearch()">
-  <span class="filter-label">To</span>
-  <input type="date" class="date-input" id="dateTo" onchange="doSearch()">
+  <div class="date-chips-row">
+    <button class="chip" id="dchip-weekend" onclick="setDateChip('weekend')">This Weekend</button>
+    <button class="chip" id="dchip-month" onclick="setDateChip('month')">This Month</button>
+    <button class="chip" id="dchip-3months" onclick="setDateChip('3months')">Next 3 Mo</button>
+    <button class="chip" id="dchip-custom" onclick="setDateChip('custom')">Custom</button>
+  </div>
   <div class="toolbar-right">
     <button class="chip active" id="chip-date" onclick="setSort('date')">Date &#8593;</button>
     <button class="chip" id="chip-name" onclick="setSort('name')">Artist A-Z</button>
     <button class="chip" id="chip-rel" onclick="setSort('relevance')">Relevance</button>
     <div class="view-btns" style="margin-left:6px">
-      <button class="vbtn" id="vlist" onclick="setView('list')" title="List">&#9776;</button>
-      <button class="vbtn" id="vgrid" onclick="setView('grid')" title="Grid">&#8862;</button>
-      <button class="vbtn active" id="vtour" onclick="setView('tour')" title="Tour">&#9830;</button>
+      <button class="vbtn" id="vlist" onclick="setView('list')" title="List">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
+      <button class="vbtn" id="vgrid" onclick="setView('grid')" title="Grid">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      </button>
+      <button class="vbtn active" id="vtour" onclick="setView('tour')" title="Tour">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </button>
+      <button class="vbtn" id="vfeed" onclick="setView('feed')" title="My Artists Feed">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
     </div>
   </div>
 </div>
 
+<!-- Custom date inputs (shown only when Custom chip is active) -->
+<div class="custom-dates-row" id="customDatesRow" style="display:none">
+  <span class="filter-label">From</span>
+  <input type="date" class="date-input" id="dateFrom" onchange="doSearch()">
+  <span class="filter-label">To</span>
+  <input type="date" class="date-input" id="dateTo" onchange="doSearch()">
+</div>
+
 <div class="layout">
   <aside class="sidebar">
+    <div id="myArtistsSb"></div>
     <div class="sb-title">Quick Search — Artists</div>
     <ul class="artist-list" id="sbList">
-      <li><button class="artist-btn" onclick="quickSearch('Taylor Swift')">Taylor Swift</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Beyoncé')">Beyoncé</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Coldplay')">Coldplay</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Ed Sheeran')">Ed Sheeran</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Drake')">Drake</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Billie Eilish')">Billie Eilish</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('The Weeknd')">The Weeknd</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Post Malone')">Post Malone</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Bad Bunny')">Bad Bunny</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Olivia Rodrigo')">Olivia Rodrigo</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Kendrick Lamar')">Kendrick Lamar</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Bruno Mars')">Bruno Mars</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Harry Styles')">Harry Styles</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Dua Lipa')">Dua Lipa</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Sabrina Carpenter')">Sabrina Carpenter</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Chappell Roan')">Chappell Roan</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('SZA')">SZA</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Tyler the Creator')">Tyler the Creator</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Zach Bryan')">Zach Bryan</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Morgan Wallen')">Morgan Wallen</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Metallica')">Metallica</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Green Day')">Green Day</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Radiohead')">Radiohead</button></li>
-      <li><button class="artist-btn" onclick="quickSearch('Arctic Monkeys')">Arctic Monkeys</button></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Taylor Swift')">Taylor Swift</button><span class="star-btn" onclick="toggleStar('Taylor Swift', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Beyoncé')">Beyoncé</button><span class="star-btn" onclick="toggleStar('Beyoncé', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Coldplay')">Coldplay</button><span class="star-btn" onclick="toggleStar('Coldplay', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Ed Sheeran')">Ed Sheeran</button><span class="star-btn" onclick="toggleStar('Ed Sheeran', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Drake')">Drake</button><span class="star-btn" onclick="toggleStar('Drake', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Billie Eilish')">Billie Eilish</button><span class="star-btn" onclick="toggleStar('Billie Eilish', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('The Weeknd')">The Weeknd</button><span class="star-btn" onclick="toggleStar('The Weeknd', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Post Malone')">Post Malone</button><span class="star-btn" onclick="toggleStar('Post Malone', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Bad Bunny')">Bad Bunny</button><span class="star-btn" onclick="toggleStar('Bad Bunny', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Olivia Rodrigo')">Olivia Rodrigo</button><span class="star-btn" onclick="toggleStar('Olivia Rodrigo', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Kendrick Lamar')">Kendrick Lamar</button><span class="star-btn" onclick="toggleStar('Kendrick Lamar', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Bruno Mars')">Bruno Mars</button><span class="star-btn" onclick="toggleStar('Bruno Mars', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Harry Styles')">Harry Styles</button><span class="star-btn" onclick="toggleStar('Harry Styles', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Dua Lipa')">Dua Lipa</button><span class="star-btn" onclick="toggleStar('Dua Lipa', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Sabrina Carpenter')">Sabrina Carpenter</button><span class="star-btn" onclick="toggleStar('Sabrina Carpenter', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Chappell Roan')">Chappell Roan</button><span class="star-btn" onclick="toggleStar('Chappell Roan', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('SZA')">SZA</button><span class="star-btn" onclick="toggleStar('SZA', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Tyler the Creator')">Tyler the Creator</button><span class="star-btn" onclick="toggleStar('Tyler the Creator', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Zach Bryan')">Zach Bryan</button><span class="star-btn" onclick="toggleStar('Zach Bryan', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Morgan Wallen')">Morgan Wallen</button><span class="star-btn" onclick="toggleStar('Morgan Wallen', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Metallica')">Metallica</button><span class="star-btn" onclick="toggleStar('Metallica', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Green Day')">Green Day</button><span class="star-btn" onclick="toggleStar('Green Day', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Radiohead')">Radiohead</button><span class="star-btn" onclick="toggleStar('Radiohead', this)" title="Follow"></span></li>
+      <li class="artist-item"><button class="artist-btn" onclick="quickSearch('Arctic Monkeys')">Arctic Monkeys</button><span class="star-btn" onclick="toggleStar('Arctic Monkeys', this)" title="Follow"></span></li>
     </ul>
   </aside>
 
@@ -525,7 +623,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // STATE
+  // ─── STATE ────────────────────────────────────────────────────────────────────
   let currentView = 'tour';
   let currentSort = 'date,asc';
   let currentPage = 0;
@@ -535,39 +633,98 @@
   let selectedState = null;
   let selectedMonth = null;
   let tourDataStore = [];
+  let eventStore = [];
+  let nearMeActive = false;
+  let activeDateChip = null;
 
-  // US STATE TILE MAP — 12-col × 8-row cartogram
+  // ─── MY ARTISTS (localStorage) ───────────────────────────────────────────────
+  let savedArtists = new Set(JSON.parse(localStorage.getItem('stageside_artists') || '[]'));
+
+  function saveSavedArtists() {
+    localStorage.setItem('stageside_artists', JSON.stringify([...savedArtists]));
+  }
+
+  const STAR_SVG_OUTLINE = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  const STAR_SVG_FILLED = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+  const CAL_SVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+
+  function toggleStar(artistName, el) {
+    if (savedArtists.has(artistName)) {
+      savedArtists.delete(artistName);
+      toast('Unfollowed ' + artistName);
+    } else {
+      savedArtists.add(artistName);
+      toast('Following ' + artistName);
+    }
+    saveSavedArtists();
+    // Update all star elements matching this artist
+    document.querySelectorAll('.star-btn').forEach(btn => {
+      if (btn.dataset.artist === artistName) {
+        const starred = savedArtists.has(artistName);
+        btn.classList.toggle('starred', starred);
+        btn.innerHTML = starred ? STAR_SVG_FILLED : STAR_SVG_OUTLINE;
+        btn.title = starred ? 'Unfollow' : 'Follow';
+      }
+    });
+    renderSidebarMyArtists();
+  }
+
+  function renderSidebarMyArtists() {
+    const el = document.getElementById('myArtistsSb');
+    if (!el) return;
+    if (savedArtists.size === 0) { el.innerHTML = ''; return; }
+
+    const sorted = [...savedArtists].sort();
+    let h = `<div class="sb-title">My Artists <span class="sb-badge">${savedArtists.size}</span></div>
+      <ul class="artist-list">`;
+    for (const name of sorted) {
+      const safe = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      h += `<li class="artist-item">
+        <button class="artist-btn" onclick="quickSearch('${safe}')">${name}</button>
+        <span class="star-btn starred" data-artist="${name.replace(/"/g, '&quot;')}" onclick="toggleStar('${safe}', this)" title="Unfollow">${STAR_SVG_FILLED}</span>
+      </li>`;
+    }
+    h += `</ul><div class="sb-divider"></div>`;
+    el.innerHTML = h;
+  }
+
+  // Init sidebar stars
+  (function initSidebarStars() {
+    document.querySelectorAll('#sbList .star-btn').forEach(btn => {
+      const li = btn.closest('.artist-item');
+      const artistName = li.querySelector('.artist-btn').textContent.trim();
+      btn.dataset.artist = artistName;
+      const starred = savedArtists.has(artistName);
+      btn.classList.toggle('starred', starred);
+      btn.innerHTML = starred ? STAR_SVG_FILLED : STAR_SVG_OUTLINE;
+      btn.title = starred ? 'Unfollow' : 'Follow';
+    });
+    renderSidebarMyArtists();
+  })();
+
+  // ─── US STATE TILE MAP ────────────────────────────────────────────────────────
   const US_STATES = [
-    // Row 1
     {code:'AK', col:1, row:1}, {code:'ME', col:12, row:1},
-    // Row 2
     {code:'WA', col:1, row:2}, {code:'MT', col:3, row:2}, {code:'ND', col:5, row:2},
     {code:'MN', col:6, row:2}, {code:'WI', col:7, row:2}, {code:'MI', col:8, row:2},
     {code:'VT', col:11, row:2}, {code:'NH', col:12, row:2},
-    // Row 3
     {code:'OR', col:1, row:3}, {code:'ID', col:2, row:3}, {code:'WY', col:3, row:3},
     {code:'SD', col:5, row:3}, {code:'IA', col:6, row:3}, {code:'IL', col:7, row:3},
     {code:'IN', col:8, row:3}, {code:'OH', col:9, row:3}, {code:'PA', col:10, row:3},
     {code:'NY', col:11, row:3}, {code:'MA', col:12, row:3},
-    // Row 4
     {code:'CA', col:1, row:4}, {code:'NV', col:2, row:4}, {code:'UT', col:3, row:4},
     {code:'CO', col:4, row:4}, {code:'NE', col:5, row:4}, {code:'MO', col:6, row:4},
     {code:'KY', col:7, row:4}, {code:'WV', col:8, row:4}, {code:'VA', col:9, row:4},
     {code:'MD', col:10, row:4}, {code:'NJ', col:11, row:4}, {code:'RI', col:12, row:4},
-    // Row 5
     {code:'AZ', col:2, row:5}, {code:'NM', col:3, row:5}, {code:'KS', col:5, row:5},
     {code:'AR', col:6, row:5}, {code:'TN', col:7, row:5}, {code:'NC', col:8, row:5},
     {code:'SC', col:9, row:5}, {code:'DE', col:10, row:5}, {code:'CT', col:11, row:5},
-    // Row 6
     {code:'OK', col:5, row:6}, {code:'LA', col:6, row:6}, {code:'MS', col:7, row:6},
     {code:'AL', col:8, row:6}, {code:'GA', col:9, row:6}, {code:'FL', col:10, row:6},
-    // Row 7
     {code:'TX', col:5, row:7},
-    // Row 8
     {code:'HI', col:1, row:8},
   ];
 
-  // Build state map on load
   (function buildStateMap() {
     const mapEl = document.getElementById('stateMap');
     let html = '';
@@ -579,7 +736,7 @@
     mapEl.innerHTML = html;
   })();
 
-  // INIT — check server for existing key
+  // ─── INIT ─────────────────────────────────────────────────────────────────────
   (async () => {
     try {
       const r = await fetch('/api/status');
@@ -593,8 +750,13 @@
     } catch(e) {}
   })();
 
-  // Set today as default date from
-  document.getElementById('dateFrom').value = new Date().toISOString().split('T')[0];
+  // Mobile hero collapse on scroll
+  window.addEventListener('scroll', () => {
+    if (window.innerWidth > 860) return;
+    const hero = document.getElementById('heroSection');
+    if (!hero) return;
+    hero.classList.toggle('compact', window.scrollY > 50);
+  }, { passive: true });
 
   async function saveKey() {
     const k = document.getElementById('keyInput').value.trim();
@@ -632,7 +794,9 @@
   }
 
   function setSort(t) {
-    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.chip').forEach(c => {
+      if (['chip-date','chip-name','chip-rel'].includes(c.id)) c.classList.remove('active');
+    });
     document.getElementById('chip-' + (t === 'date' ? 'date' : t === 'name' ? 'name' : 'rel')).classList.add('active');
     currentSort = t === 'date' ? 'date,asc' : t === 'name' ? 'name,asc' : 'relevance,desc';
     doSearch();
@@ -642,7 +806,11 @@
     currentView = v;
     document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
     document.getElementById('v' + v).classList.add('active');
-    if (cachedData) renderData(cachedData);
+    if (v === 'feed') {
+      loadFeed();
+    } else if (cachedData) {
+      renderData(cachedData);
+    }
   }
 
   function quickSearch(name) {
@@ -651,8 +819,108 @@
     doSearch();
   }
 
+  // ─── DATE CHIPS ───────────────────────────────────────────────────────────────
+  function setDateChip(chip) {
+    document.querySelectorAll('[id^="dchip-"]').forEach(c => c.classList.remove('active'));
+
+    if (activeDateChip === chip) {
+      // Toggle off
+      activeDateChip = null;
+      document.getElementById('customDatesRow').style.display = 'none';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      doSearch();
+      return;
+    }
+
+    activeDateChip = chip;
+    document.getElementById('dchip-' + chip).classList.add('active');
+
+    if (chip === 'custom') {
+      document.getElementById('customDatesRow').style.display = 'flex';
+      return; // Wait for user to fill dates
+    }
+
+    document.getElementById('customDatesRow').style.display = 'none';
+
+    const now = new Date();
+    let df, dt;
+
+    if (chip === 'weekend') {
+      const day = now.getDay();
+      const daysToFri = day === 0 ? 5 : day <= 5 ? 5 - day : 6;
+      const fri = new Date(now); fri.setDate(now.getDate() + (daysToFri === 0 ? 0 : daysToFri));
+      const sun = new Date(fri); sun.setDate(fri.getDate() + 2);
+      df = fri.toISOString().split('T')[0];
+      dt = sun.toISOString().split('T')[0];
+    } else if (chip === 'month') {
+      df = now.toISOString().split('T')[0];
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      dt = lastDay.toISOString().split('T')[0];
+    } else if (chip === '3months') {
+      df = now.toISOString().split('T')[0];
+      const end = new Date(now); end.setMonth(end.getMonth() + 3);
+      dt = end.toISOString().split('T')[0];
+    }
+
+    document.getElementById('dateFrom').value = df;
+    document.getElementById('dateTo').value = dt;
+    doSearch();
+  }
+
+  // ─── NEAR ME ──────────────────────────────────────────────────────────────────
+  function nearMe() {
+    if (!keyConnected) { toast('Save your API key first', true); return; }
+
+    if (nearMeActive) {
+      nearMeActive = false;
+      document.getElementById('nearMeBtn').classList.remove('active');
+      loadDefault();
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      toast('Geolocation not supported in this browser', true);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        nearMeActive = true;
+        document.getElementById('nearMeBtn').classList.add('active');
+        const { latitude, longitude } = pos.coords;
+        currentPage = 0;
+        // Clear other inputs
+        document.getElementById('searchInput').value = '';
+        document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
+        const today = new Date().toISOString().split('T')[0];
+        const p = {
+          latlong: `${latitude},${longitude}`,
+          radius: 50,
+          unit: 'miles',
+          sort: 'date,asc',
+          includeTest: 'no',
+          classificationName: 'music',
+          startDateTime: today + 'T00:00:00Z'
+        };
+        lastParams = p;
+        toast('Finding shows near you...');
+        fetchEvents(p, 0);
+      },
+      () => {
+        toast('Location access denied', true);
+      }
+    );
+  }
+
+  // ─── SEARCH ───────────────────────────────────────────────────────────────────
   function doSearch() {
     if (!keyConnected) { toast('Save your API key first', true); return; }
+    if (currentView === 'feed') {
+      setView('tour');
+    }
+    nearMeActive = false;
+    document.getElementById('nearMeBtn').classList.remove('active');
     currentPage = 0;
     const keyword = document.getElementById('searchInput').value.trim();
     const country = document.getElementById('countryFilter').value;
@@ -687,6 +955,79 @@
     }
   }
 
+  // ─── MY ARTISTS FEED ─────────────────────────────────────────────────────────
+  async function loadFeed() {
+    if (savedArtists.size === 0) {
+      document.getElementById('mainArea').innerHTML = `
+        <div class="state-box">
+          <div class="state-icon">&#9733;</div>
+          <div class="state-title">No Saved Artists</div>
+          <p class="state-sub">Star artists in search results or the sidebar to build your personal concert feed.</p>
+        </div>`;
+      return;
+    }
+
+    showLoader();
+    const country = document.getElementById('countryFilter').value || 'US';
+    const today = new Date().toISOString().split('T')[0];
+
+    const fetches = [...savedArtists].map(async artist => {
+      const qs = new URLSearchParams({
+        keyword: artist,
+        countryCode: country,
+        sort: 'date,asc',
+        size: 10,
+        startDateTime: today + 'T00:00:00Z',
+        includeTest: 'no'
+      });
+      try {
+        const r = await fetch(`/api/events?${qs}`);
+        const data = await r.json();
+        return data._embedded?.events || [];
+      } catch { return []; }
+    });
+
+    const results = await Promise.all(fetches);
+    const allEvents = results.flat().filter((e, i, arr) =>
+      arr.findIndex(x => x.id === e.id) === i // dedupe by id
+    );
+
+    allEvents.sort((a, b) => {
+      const da = a.dates?.start?.localDate || '';
+      const db = b.dates?.start?.localDate || '';
+      return da < db ? -1 : da > db ? 1 : 0;
+    });
+
+    if (allEvents.length === 0) {
+      document.getElementById('mainArea').innerHTML = `
+        <div class="state-box">
+          <div class="state-icon">&#9733;</div>
+          <div class="state-title">No Upcoming Shows</div>
+          <p class="state-sub">None of your saved artists have upcoming shows on Ticketmaster right now. Try a different country.</p>
+        </div>`;
+      return;
+    }
+
+    // Reset stores
+    tourDataStore = [];
+    eventStore = [];
+
+    const savedLastParams = lastParams;
+    lastParams = {};
+
+    let html = `<div class="feed-header">
+      <div>
+        <div class="feed-title">My Artists Feed</div>
+        <div class="feed-sub">${savedArtists.size} artists &middot; ${allEvents.length} upcoming shows</div>
+      </div>
+    </div>`;
+    html += renderTour(allEvents);
+    html += '<div id="pgArea"></div>';
+    document.getElementById('mainArea').innerHTML = html;
+
+    lastParams = savedLastParams;
+  }
+
   // ─── RELEVANCE SCORING ───────────────────────────────────────────────────────
   function scoreRelevance(event, keyword) {
     const kw = keyword.toLowerCase().trim();
@@ -707,7 +1048,6 @@
       return;
     }
 
-    // Split into primary / secondary based on keyword relevance
     let primary = events, secondary = [];
     if (lastParams.keyword) {
       primary = []; secondary = [];
@@ -716,12 +1056,12 @@
         if (score >= 2) primary.push(e);
         else secondary.push(e);
       }
-      // Avoid an empty primary list — fall back to showing all as primary
       if (primary.length === 0) { primary = events; secondary = []; }
     }
 
-    // Reset tour data store for fresh index assignment
+    // Reset stores
     tourDataStore = [];
+    eventStore = [];
 
     let html = `<div class="results-meta"><div class="results-count"><strong>${total.toLocaleString()}</strong> events found</div></div>`;
 
@@ -753,6 +1093,9 @@
   function renderList(events) {
     let h = '<div class="ev-list">';
     for (const e of events) {
+      const evIdx = eventStore.length;
+      eventStore.push(e);
+
       const {mon,day,yr} = fmtDate(e.dates?.start?.localDate);
       const v = e._embedded?.venues?.[0];
       const city = v?.city?.name || '';
@@ -764,6 +1107,8 @@
       const url = e.url || '#';
       const genre = e.classifications?.[0]?.genre?.name;
       const status = e.dates?.status?.code;
+      const starred = savedArtists.has(artist);
+      const safeArtist = artist.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
       let badge = '';
       if (status === 'offsale') badge = `<span class="tag tag-offsale">Sold Out</span>`;
       else if (status === 'onsale') badge = `<span class="tag tag-onsale">On Sale</span>`;
@@ -774,10 +1119,14 @@
           <div class="ev-artist">${artist}</div>
           ${showName ? `<div class="ev-show">${showName}</div>` : ''}
           <div class="ev-loc"><span class="ev-venue">${venue}</span><span>${city}${state?', '+state:''}</span></div>
-          <div class="ev-tags">${genre&&genre!=='Undefined'?`<span class="tag tag-genre">${genre}</span>`:''}${badge}</div>
+          <div class="ev-tags">
+            ${genre&&genre!=='Undefined'?`<span class="tag tag-genre">${genre}</span>`:''}${badge}
+            <span class="cal-btn" data-idx="${evIdx}" onclick="event.preventDefault();event.stopPropagation();generateICS(${evIdx})" title="Add to calendar">${CAL_SVG}</span>
+            <span class="star-btn${starred?' starred':''}" data-artist="${artist.replace(/"/g,'&quot;')}" onclick="event.preventDefault();event.stopPropagation();toggleStar('${safeArtist}',this)" title="${starred?'Unfollow':'Follow'}">${starred?STAR_SVG_FILLED:STAR_SVG_OUTLINE}</span>
+          </div>
         </div>
         <div class="ev-price">${price?`<div class="price-lbl">From</div><div class="price-val">${price}</div>`:''}</div>
-        <a class="ticket-link" href="${url}" target="_blank" rel="noopener">Get Tickets</a>
+        <a class="ticket-link" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Get Tickets</a>
       </a>`;
     }
     return h + '</div>';
@@ -786,6 +1135,9 @@
   function renderGrid(events) {
     let h = '<div class="ev-grid">';
     for (const e of events) {
+      const evIdx = eventStore.length;
+      eventStore.push(e);
+
       const {dateStr} = fmtDate(e.dates?.start?.localDate);
       const v = e._embedded?.venues?.[0];
       const city = v?.city?.name || '';
@@ -793,13 +1145,22 @@
       const artist = e._embedded?.attractions?.[0]?.name || e.name;
       const url = e.url || '#';
       const img = getBestImg(e);
+      const starred = savedArtists.has(artist);
+      const safeArtist = artist.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
       h += `<a class="ev-gcard" href="${url}" target="_blank" rel="noopener">
         ${img ? `<img class="gcard-img" src="${img}" alt="${artist}" loading="lazy">` : `<div class="gcard-placeholder">${artist.charAt(0)}</div>`}
         <div class="gcard-body">
           <div class="gcard-badge">${dateStr}</div>
           <div class="gcard-artist">${artist}</div>
           <div class="gcard-venue">${v?.name||''}</div>
-          <div class="gcard-foot"><span class="gcard-city">${city}${state?', '+state:''}</span><span class="ticket-link" style="font-size:10px;padding:5px 10px">Tickets &#8594;</span></div>
+          <div class="gcard-foot">
+            <span class="gcard-city">${city}${state?', '+state:''}</span>
+            <span style="display:flex;gap:4px;align-items:center">
+              <span class="cal-btn" onclick="event.preventDefault();event.stopPropagation();generateICS(${evIdx})" title="Add to calendar">${CAL_SVG}</span>
+              <span class="star-btn${starred?' starred':''}" data-artist="${artist.replace(/"/g,'&quot;')}" onclick="event.preventDefault();event.stopPropagation();toggleStar('${safeArtist}',this)" title="${starred?'Unfollow':'Follow'}">${starred?STAR_SVG_FILLED:STAR_SVG_OUTLINE}</span>
+            </span>
+          </div>
         </div>
       </a>`;
     }
@@ -808,27 +1169,36 @@
 
   function renderTour(events) {
     const groups = {};
+    const groupOrder = [];
     for (const e of events) {
       const artist = e._embedded?.attractions?.[0]?.name || e.name;
-      if (!groups[artist]) groups[artist] = [];
+      if (!groups[artist]) { groups[artist] = []; groupOrder.push(artist); }
       groups[artist].push(e);
     }
 
     const shareSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`;
 
     let h = '';
-    for (const [artist, shows] of Object.entries(groups)) {
+    for (const artist of groupOrder) {
+      const shows = groups[artist];
       const idx = tourDataStore.length;
       tourDataStore.push({ artist, shows });
+
+      const starred = savedArtists.has(artist);
+      const safeArtist = artist.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
       h += `<div class="tour-group">
         <div class="tour-head">
           <span class="tour-name">${artist}</span>
           <span class="tour-cnt">${shows.length} show${shows.length>1?'s':''}</span>
+          <span class="star-btn${starred?' starred':''}" data-artist="${artist.replace(/"/g,'&quot;')}" onclick="toggleStar('${safeArtist}',this)" title="${starred?'Unfollow':'Follow'}">${starred?STAR_SVG_FILLED:STAR_SVG_OUTLINE}</span>
           <button class="ig-btn" onclick="generateIGPost(${idx})" title="Generate Instagram post">${shareSVG}</button>
         </div>
         <div class="tour-pills">`;
+
       for (const s of shows) {
+        const evIdx = eventStore.length;
+        eventStore.push(s);
         const v = s._embedded?.venues?.[0];
         const {dateStr} = fmtDate(s.dates?.start?.localDate);
         const city = v?.city?.name || '';
@@ -837,6 +1207,7 @@
           <div class="pill-d">${dateStr}</div>
           <div class="pill-c">${city}${state?', '+state:''}</div>
           <div class="pill-v">${v?.name||''}</div>
+          <span class="pill-cal" onclick="event.preventDefault();event.stopPropagation();generateICS(${evIdx})" title="Add to calendar">${CAL_SVG}</span>
         </a>`;
       }
       h += '</div></div>';
@@ -844,6 +1215,72 @@
     return h;
   }
 
+  // ─── ADD TO CALENDAR (.ics) ───────────────────────────────────────────────────
+  function generateICS(evIdx) {
+    const e = eventStore[evIdx];
+    if (!e) return;
+
+    const v = e._embedded?.venues?.[0];
+    const artist = e._embedded?.attractions?.[0]?.name || e.name;
+    const venue = v?.name || '';
+    const city = v?.city?.name || '';
+    const stateCode = v?.state?.stateCode || '';
+    const url = e.url || '';
+    const dateStr = e.dates?.start?.localDate;
+    const timeStr = e.dates?.start?.localTime;
+
+    if (!dateStr) { toast('No date info for this event', true); return; }
+
+    let dtstart, dtend;
+    if (timeStr) {
+      const cleanTime = timeStr.replace(/:/g, '').substring(0, 6);
+      dtstart = dateStr.replace(/-/g, '') + 'T' + cleanTime;
+      // 3-hour default duration
+      const endMs = new Date(dateStr + 'T' + timeStr).getTime() + 3 * 60 * 60 * 1000;
+      const endDate = new Date(endMs);
+      const pad = n => String(n).padStart(2, '0');
+      dtend = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
+    } else {
+      dtstart = dateStr.replace(/-/g, '');
+      dtend = dtstart;
+    }
+
+    const uid = `stageside-${e.id || Date.now()}@ihsan.build`;
+    const location = [venue, city, stateCode].filter(Boolean).join(', ');
+    const summary = `${artist} at ${venue}`;
+    const desc = `${artist} at ${venue}\\n${city}${stateCode?', '+stateCode:''}\\n${url}`;
+
+    const dtProp = timeStr ? 'DTSTART' : 'DTSTART;VALUE=DATE';
+    const dteProp = timeStr ? 'DTEND' : 'DTEND;VALUE=DATE';
+
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Stageside//Concert Tracker//EN',
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `${dtProp}:${dtstart}`,
+      `${dteProp}:${dtend}`,
+      `SUMMARY:${summary}`,
+      `LOCATION:${location}`,
+      `URL:${url}`,
+      `DESCRIPTION:${desc}`,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `stageside-${artist.replace(/\s+/g,'-').replace(/[^a-zA-Z0-9-]/g,'').toLowerCase()}-${dateStr}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    toast('Calendar event downloaded');
+  }
+
+  // ─── PAGINATION ───────────────────────────────────────────────────────────────
   function renderPagination(page) {
     if (!page || page.totalPages <= 1) return;
     const area = document.getElementById('pgArea');
@@ -855,7 +1292,7 @@
     if (s>0) h += `<button class="pg-btn" onclick="goPage(0)">1</button><span class="pg-info">&hellip;</span>`;
     for (let i=s;i<=e;i++) h += `<button class="pg-btn ${i===cur?'active':''}" onclick="goPage(${i})">${i+1}</button>`;
     if (e<total-1) h += `<span class="pg-info">&hellip;</span><button class="pg-btn" onclick="goPage(${total-1})">${total}</button>`;
-    h += `<button class="pg-btn" onclick="goPage(${cur+1})" ${cur>=total-1?'disabled':''}>Next &rarr;</button>`;
+    h += `<button class="pg-btn" onclick="goPage(${cur+1})" ${cur>=total-1?'disabled':''}> Next &rarr;</button>`;
     h += `<span class="pg-info">${cur+1}/${total} pages</span></div>`;
     area.innerHTML = h;
   }
@@ -901,8 +1338,6 @@
 
   function browseSearch() {
     if (!keyConnected) { toast('Save your API key first', true); return; }
-
-    // Clear keyword search to avoid conflict
     document.getElementById('searchInput').value = '';
     document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
 
@@ -917,7 +1352,6 @@
       p.startDateTime = `${year}-${mm}-01T00:00:00Z`;
       p.endDateTime = `${year}-${mm}-${lastDay}T23:59:59Z`;
     } else {
-      // Default: from today onwards
       p.startDateTime = new Date().toISOString().split('T')[0] + 'T00:00:00Z';
     }
     if (genre) p.genreId = genre;
@@ -951,7 +1385,6 @@
       ]);
     } catch(e) { /* proceed anyway */ }
 
-    // Filter to next 6 months from today
     const now = new Date();
     const cutoff = new Date(now.getFullYear(), now.getMonth() + 6, now.getDate());
     const upcoming = shows.filter(s => {
@@ -968,15 +1401,11 @@
     canvas.height = SIZE;
     const ctx = canvas.getContext('2d');
 
-    // Background
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, SIZE, SIZE);
-
-    // Accent bar — top
     ctx.fillStyle = '#e8ff47';
     ctx.fillRect(0, 0, SIZE, 8);
 
-    // Subtle grid lines for texture
     ctx.strokeStyle = 'rgba(255,255,255,0.03)';
     ctx.lineWidth = 1;
     for (let i = 0; i < SIZE; i += 60) {
@@ -984,27 +1413,23 @@
       ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(SIZE, i); ctx.stroke();
     }
 
-    // "STAGESIDE" small label
     ctx.font = '500 22px "DM Sans"';
     ctx.fillStyle = '#333';
     ctx.letterSpacing = '4px';
     ctx.textAlign = 'center';
     ctx.fillText('STAGESIDE', SIZE / 2, 56);
 
-    // Artist name
     ctx.font = '96px "Bebas Neue"';
     ctx.fillStyle = '#f0f0f0';
     ctx.letterSpacing = '2px';
     ctx.textAlign = 'center';
     ctx.fillText(artistName.toUpperCase(), SIZE / 2, 186);
 
-    // "UPCOMING SHOWS" label
     ctx.font = '500 22px "DM Sans"';
     ctx.fillStyle = '#e8ff47';
     ctx.letterSpacing = '6px';
     ctx.fillText('UPCOMING SHOWS', SIZE / 2, 240);
 
-    // Divider
     ctx.strokeStyle = '#222';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -1012,7 +1437,6 @@
     ctx.lineTo(SIZE - 80, 262);
     ctx.stroke();
 
-    // Show rows
     const ROW_HEIGHT = 62;
     const startY = 306;
     const LIME = '#e8ff47';
@@ -1029,26 +1453,21 @@
 
       const y = startY + i * ROW_HEIGHT;
 
-      // Date
       ctx.font = '44px "Bebas Neue"';
       ctx.fillStyle = LIME;
       ctx.textAlign = 'left';
       ctx.fillText(dateStr, 90, y);
 
-      // Year (smaller, muted)
       ctx.font = '24px "Bebas Neue"';
       ctx.fillStyle = '#555';
       ctx.fillText(String(yr), 90, y + 24);
 
-      // City + state
       ctx.font = '400 26px "DM Sans"';
       ctx.fillStyle = '#f0f0f0';
       ctx.fillText(`${city}${state ? ', ' + state : ''}`, 240, y);
 
-      // Venue
       ctx.font = '300 20px "DM Sans"';
       ctx.fillStyle = '#555';
-      // Truncate venue name if too long
       let venueName = venue;
       if (ctx.measureText(venueName).width > 700) {
         while (ctx.measureText(venueName + '…').width > 700 && venueName.length > 0) {
@@ -1058,7 +1477,6 @@
       }
       ctx.fillText(venueName, 240, y + 28);
 
-      // Row separator
       if (i < displayShows.length - 1) {
         ctx.strokeStyle = '#1a1a1a';
         ctx.lineWidth = 1;
@@ -1069,11 +1487,9 @@
       }
     }
 
-    // Bottom accent bar
     ctx.fillStyle = '#e8ff47';
     ctx.fillRect(0, SIZE - 6, SIZE, 6);
 
-    // Bottom watermark
     ctx.font = '300 18px "DM Sans"';
     ctx.fillStyle = '#2a2a2a';
     ctx.letterSpacing = '3px';
@@ -1112,7 +1528,7 @@
   }
 
   function showError(msg) {
-    document.getElementById('mainArea').innerHTML = `<div class="state-box"><div class="state-icon">&#9888;&#65039;</div><div class="state-title">Something Went Wrong</div><p class="state-sub">${msg}</p></div>`;
+    document.getElementById('mainArea').innerHTML = `<div class="state-box"><div class="state-icon">&#9888;</div><div class="state-title">Something Went Wrong</div><p class="state-sub">${msg}</p></div>`;
   }
 
   function toast(msg, isErr=false) {
