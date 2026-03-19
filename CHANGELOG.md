@@ -1,5 +1,12 @@
 # Stageside Changelog
 
+## v2.4.3 — 2026-03-19
+
+### Fixed
+- **Hero blank on scroll-back** — hero content was permanently hidden after pagination; re-expansion now triggers correctly when scrolling back to the top of the page
+- **Country dropdown arrow invisible in dark mode** — replaced browser-default arrow (dark icon on dark background) with a custom light-coloured SVG chevron; adjusts for light mode too
+- **Clear button always visible** — "Clear" filter button now only appears when at least one filter or search is active; hidden by default and on reset
+
 ## v2.4.2 — 2026-03-19
 
 ### Added
