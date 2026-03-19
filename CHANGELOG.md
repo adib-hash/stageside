@@ -1,5 +1,30 @@
 # Stageside Changelog
 
+## v2.2.0 — 2026-03-19
+
+### Added
+- **Dark / Light mode toggle** — Sun/moon icon in header. Persisted in localStorage. Light mode uses dark olive green accent (`#4a7c00`) on cream background.
+- **Logo as home button** — Tapping the STAGESIDE logo resets the app to default state (clears search, filters, returns to tour view).
+- **Share button** — Share icon on every tour pill, list card, and grid card. Opens native iOS share sheet; falls back to clipboard copy on desktop.
+- **Near Me city display** — After granting location access, the search bar now shows the detected city/state name using BigDataCloud's free reverse geocode API.
+- **iOS PWA icon** — Added `apple-touch-icon.svg` and PWA meta tags (`apple-mobile-web-app-capable`, etc.) for home screen installation.
+
+### Changed
+- **Hero scroll behavior** — Hero only expands back when scrollY reaches exactly 0 (fully at top). No more snap-back mid-scroll.
+- **Pagination scroll** — Clicking Next/Prev scrolls to first result (top of main area), not to the very top of the page.
+- **Calendar buttons on mobile** — `.pill-cal` and `.cal-btn` are now always visible on mobile (no hover required). Tap targets increased.
+- **Date chips** — Removed preset "This Weekend", "This Month", "Next 3 Mo" chips. Only "Custom Dates" remains.
+- **Search placeholder** — Updated to "Search artist, city, venue or tour..."
+- **Country selector** — Removed emoji flag sequences; clean text-only options.
+- **Hero eyebrow** — Replaced ▶ Unicode arrow with an inline SVG polygon.
+- **IG post button** — Updated to a download icon (arrow pointing down into tray). Tooltip updated to "Download Instagram post".
+- **State box icons** — Replaced emoji (🔍, ⚠, ★) with inline SVGs.
+- **Double-tap zoom** — `html { touch-action: manipulation }` prevents iOS double-tap zoom across the entire app.
+- **Overscroll** — `body { overscroll-behavior-y: contain }` prevents pull-to-refresh interference.
+- **Hero compact transition** — Eyebrow and title now fade out with `opacity` transition instead of `display:none` snap.
+- **Touch targets** — All interactive elements get `touch-action: manipulation` and `-webkit-tap-highlight-color: transparent`. View buttons, chips, search-go, and near-btn have enforced minimum tap sizes on mobile.
+- **Removed dead CSS** — Removed `.key-input { width: 160px }` from mobile query (API key input was removed in v2.1).
+
 ## v2.1.0 — 2026-03-19
 
 ### Changed
