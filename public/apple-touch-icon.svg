@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
-  <rect width="180" height="180" fill="#0a0a0a"/>
-  <text x="90" y="130" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="130" text-anchor="middle" fill="#e8ff47">S</text>
+  <!-- Dark background -->
+  <rect width="180" height="180" rx="40" fill="#0a0a0a"/>
+  <!-- Accent top bar -->
+  <rect x="0" y="0" width="180" height="10" rx="5" fill="#e8ff47"/>
+  <!-- Letter S as geometric path (lime yellow, centered) -->
+  <text x="90" y="138" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="136" text-anchor="middle" fill="#e8ff47" letter-spacing="-4">S</text>
 </svg>

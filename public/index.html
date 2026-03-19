@@ -89,6 +89,7 @@
   body.light-mode header { background: rgba(247,247,245,0.96); }
   body.light-mode .hero::after { color: rgba(0,0,0,0.04); }
   .hero-eyebrow { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; transition: all .2s; }
+  .hero-powered { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: -20px; margin-bottom: 28px; }
   .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 1px; line-height: 1; margin-bottom: 28px; transition: all .2s; }
   .hero-title span { color: var(--accent); }
   .search-bar { display: flex; gap: 10px; max-width: 720px; position: relative; z-index: 1; }
@@ -104,6 +105,7 @@
     padding: 13px 14px; font-family: 'DM Sans', sans-serif; font-size: 16px;
     border-radius: 6px; outline: none; cursor: pointer; min-width: 140px;
   }
+  .search-country-mobile { display: none; }
   .search-go {
     background: var(--accent); color: #000; border: none; padding: 13px 26px;
     font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 2px;
@@ -123,10 +125,11 @@
 
   /* HERO COMPACT (mobile scroll) */
   .hero { transition: padding .2s ease; }
-  .hero-eyebrow, .hero-title { transition: opacity .15s ease; }
+  .hero-eyebrow, .hero-title, .hero-powered { transition: opacity .15s ease; }
   .hero.compact { padding: 10px 16px; }
   .hero.compact .hero-eyebrow { opacity: 0; pointer-events: none; }
   .hero.compact .hero-title { opacity: 0; pointer-events: none; }
+  .hero.compact .hero-powered { opacity: 0; pointer-events: none; }
   .hero.compact::after { opacity: 0; }
 
   /* BROWSE PANEL */
@@ -415,6 +418,27 @@
   .pill-cal:hover { color: var(--accent) !important; }
   .pill-cal svg { display: block; }
 
+  /* Tour pill info-only link (wraps date/city/venue) */
+  .pill-info { display: block; text-decoration: none; color: inherit; }
+
+  /* Mobile action bar shown at bottom of each pill */
+  .pill-footer {
+    display: none;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .pill-footer-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+    background: none; border: none; border-right: 1px solid var(--border);
+    color: var(--muted2); cursor: pointer; padding: 8px 4px;
+    font-family: 'DM Sans', sans-serif; font-size: 10px; letter-spacing: .5px;
+    transition: color .15s, background .15s; text-decoration: none;
+  }
+  .pill-footer-btn:last-child { border-right: none; }
+  .pill-footer-btn:active { background: var(--surface2); color: var(--text); }
+  .pill-footer-btn svg { flex-shrink: 0; }
+
   /* IG / DOWNLOAD BUTTON */
   .ig-btn {
     background: transparent; border: none; color: var(--muted);
@@ -436,7 +460,7 @@
   .share-btn:hover { color: var(--accent); }
   .share-btn svg { display: block; }
   .pill-share {
-    position: absolute; top: 6px; right: 28px;
+    position: absolute; top: 6px; right: 24px;
     color: var(--muted); cursor: pointer; padding: 2px;
     transition: color .15s; opacity: 0;
     background: none; border: none; line-height: 1;
@@ -486,7 +510,10 @@
     .main-area { padding-bottom: 32px; }
     .ev-card { grid-template-columns: 60px 1fr; }
     .ev-price, .ticket-link { display: none; }
-    .search-bar { flex-wrap: wrap; }
+    .search-bar { flex-wrap: nowrap; gap: 6px; }
+    .search-main { flex: 1; min-width: 0; }
+    .search-country-desktop { display: none; }
+    .search-country-mobile { display: block; min-width: unset; width: 52px; padding: 13px 6px; text-align: center; font-size: 18px; flex-shrink: 0; }
     .browse-toggle { padding: 12px 16px; }
     .browse-body { padding: 12px 16px 20px; flex-direction: column; gap: 20px; }
     .map-wrap { overflow-x: auto; padding-bottom: 6px; max-width: calc(100vw - 32px); }
@@ -494,12 +521,14 @@
     input[type="range"].month-slider { width: 100%; }
     .custom-dates-row { padding: 8px 16px 12px; flex-wrap: wrap; }
     .date-chips-row { margin-left: 0; }
-    /* Cal + share buttons: always visible with bigger tap targets */
-    .pill-cal { opacity: 1; padding: 6px; }
-    .pill-share { opacity: 1; padding: 6px; right: 32px; }
-    .tour-pill { padding-right: 60px; min-width: 140px; padding-top: 10px; padding-bottom: 10px; }
+    /* Mobile tour pills: hide old hover overlays, show footer action bar instead */
+    .pill-cal, .pill-share { display: none; }
+    .pill-footer { display: flex; }
+    .tour-pill { min-width: 140px; padding-bottom: 0; }
+    .pill-info { padding-bottom: 8px; }
     .pill-d { font-size: 15px; }
     .pill-c { font-size: 12px; }
+    /* List/grid cal + share: bigger tap targets */
     .cal-btn { padding: 6px; border: 1px solid var(--border); border-radius: 4px; }
     .share-btn { padding: 6px; border: 1px solid var(--border); border-radius: 4px; }
     /* Minimum tap targets */
@@ -525,9 +554,10 @@
 <section class="hero" id="heroSection">
   <div class="hero-eyebrow" style="display:flex;align-items:center;gap:5px"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Live Events Worldwide</div>
   <h1 class="hero-title">Every Tour.<br>Every <span>City</span>. Every Show.</h1>
+  <div class="hero-powered">Data via Ticketmaster</div>
   <div class="search-bar">
     <input class="search-main" id="searchInput" type="text" placeholder="Search artist, city, venue or tour..." onkeydown="if(event.key==='Enter')doSearch()">
-    <select class="search-country" id="countryFilter" onchange="doSearch()">
+    <select class="search-country search-country-desktop" id="countryFilter" onchange="syncCountry('desktop',this.value)">
       <option value="US">United States</option>
       <option value="GB">United Kingdom</option>
       <option value="CA">Canada</option>
@@ -536,6 +566,16 @@
       <option value="FR">France</option>
       <option value="MX">Mexico</option>
       <option value="">Worldwide</option>
+    </select>
+    <select class="search-country search-country-mobile" id="countryFilterMobile" onchange="syncCountry('mobile',this.value)">
+      <option value="US">&#127482;&#127480;</option>
+      <option value="GB">&#127468;&#127463;</option>
+      <option value="CA">&#127464;&#127462;</option>
+      <option value="AU">&#127462;&#127482;</option>
+      <option value="DE">&#127465;&#127466;</option>
+      <option value="FR">&#127467;&#127479;</option>
+      <option value="MX">&#127474;&#127485;</option>
+      <option value="">&#127757;</option>
     </select>
     <button class="near-btn" id="nearMeBtn" onclick="nearMe()" title="Shows near me">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -570,23 +610,6 @@
 </div>
 
 <div class="toolbar">
-  <span class="filter-label">Genre</span>
-  <select class="filter-sel" id="genreFilter" onchange="doSearch()">
-    <option value="">All Music</option>
-    <option value="KZFzniwnSyZfZ7v7nE">Rock</option>
-    <option value="KZFzniwnSyZfZ7v7n1">Pop</option>
-    <option value="KZFzniwnSyZfZ7v7na">Hip-Hop / Rap</option>
-    <option value="KZFzniwnSyZfZ7v7nk">Country</option>
-    <option value="KZFzniwnSyZfZ7v7nW">Electronic / Dance</option>
-    <option value="KZFzniwnSyZfZ7v7nF">R&amp;B / Soul</option>
-    <option value="KZFzniwnSyZfZ7v7nI">Jazz</option>
-    <option value="KZFzniwnSyZfZ7v7nG">Classical</option>
-    <option value="KZFzniwnSyZfZ7v7nb">Latin</option>
-    <option value="KZFzniwnSyZfZ7v7nA">Metal</option>
-    <option value="KZFzniwnSyZfZ7v7nv">Alternative</option>
-    <option value="KZFzniwnSyZfZ7v7nH">Folk</option>
-    <option value="KZFzniwnSyZfZ7v7nJ">Indie</option>
-  </select>
   <div class="date-chips-row">
     <button class="chip" id="dchip-custom" onclick="setDateChip('custom')">Custom Dates</button>
   </div>
@@ -699,6 +722,8 @@
     activeDateChip = null;
     document.querySelectorAll('[id^="dchip-"]').forEach(c => c.classList.remove('active'));
     document.getElementById('customDatesRow').style.display = 'none';
+    document.getElementById('countryFilter').value = 'US';
+    document.getElementById('countryFilterMobile').value = 'US';
     setView('tour');
     loadDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -786,7 +811,7 @@
     {code:'MD', col:10, row:4}, {code:'NJ', col:11, row:4}, {code:'RI', col:12, row:4},
     {code:'AZ', col:2, row:5}, {code:'NM', col:3, row:5}, {code:'KS', col:5, row:5},
     {code:'AR', col:6, row:5}, {code:'TN', col:7, row:5}, {code:'NC', col:8, row:5},
-    {code:'SC', col:9, row:5}, {code:'DE', col:10, row:5}, {code:'CT', col:11, row:5},
+    {code:'SC', col:9, row:5}, {code:'DE', col:10, row:5}, {code:'CT', col:11, row:5}, {code:'DC', col:12, row:5},
     {code:'OK', col:5, row:6}, {code:'LA', col:6, row:6}, {code:'MS', col:7, row:6},
     {code:'AL', col:8, row:6}, {code:'GA', col:9, row:6}, {code:'FL', col:10, row:6},
     {code:'TX', col:5, row:7},
@@ -822,7 +847,22 @@
 
   function loadDefault() {
     currentPage = 0;
-    fetchEvents({ classificationName: 'music', sort: currentSort, countryCode: 'US', includeTest: 'no' });
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+    const mm = String(month).padStart(2, '0');
+    const lastDay = new Date(year, month, 0).getDate();
+    lastParams = {
+      keyword: 'New York',
+      countryCode: 'US',
+      stateCode: 'NY',
+      classificationName: 'music',
+      sort: 'date,asc',
+      includeTest: 'no',
+      startDateTime: `${year}-${mm}-01T00:00:00Z`,
+      endDateTime: `${year}-${mm}-${lastDay}T23:59:59Z`,
+    };
+    fetchEvents(lastParams);
   }
 
   function setSort(t) {
@@ -843,6 +883,15 @@
     } else if (cachedData) {
       renderData(cachedData);
     }
+  }
+
+  function syncCountry(source, val) {
+    if (source === 'desktop') {
+      document.getElementById('countryFilterMobile').value = val;
+    } else {
+      document.getElementById('countryFilter').value = val;
+    }
+    doSearch();
   }
 
   function quickSearch(name) {
@@ -933,7 +982,6 @@
     currentPage = 0;
     const keyword = document.getElementById('searchInput').value.trim();
     const country = document.getElementById('countryFilter').value;
-    const genre = document.getElementById('genreFilter').value;
     const df = document.getElementById('dateFrom').value;
     const dt = document.getElementById('dateTo').value;
 
@@ -941,7 +989,6 @@
     if (keyword) p.keyword = keyword;
     else p.classificationName = 'music';
     if (country) p.countryCode = country;
-    if (genre) p.genreId = genre;
     if (df) p.startDateTime = df + 'T00:00:00Z';
     if (dt) p.endDateTime = dt + 'T23:59:59Z';
 
@@ -1214,13 +1261,30 @@
         const {dateStr} = fmtDate(s.dates?.start?.localDate);
         const city = v?.city?.name || '';
         const state = v?.state?.stateCode || '';
-        h += `<a class="tour-pill" href="${s.url||'#'}" target="_blank" rel="noopener">
-          <div class="pill-d">${dateStr}</div>
-          <div class="pill-c">${city}${state?', '+state:''}</div>
-          <div class="pill-v">${v?.name||''}</div>
-          <span class="pill-share" onclick="event.preventDefault();event.stopPropagation();shareEvent(${evIdx})" title="Share">${SHARE_SVG}</span>
-          <span class="pill-cal" onclick="event.preventDefault();event.stopPropagation();generateICS(${evIdx})" title="Add to calendar">${CAL_SVG}</span>
-        </a>`;
+        const ticketUrl = s.url || '#';
+        h += `<div class="tour-pill">
+          <a class="pill-info" href="${ticketUrl}" target="_blank" rel="noopener">
+            <div class="pill-d">${dateStr}</div>
+            <div class="pill-c">${city}${state?', '+state:''}</div>
+            <div class="pill-v">${v?.name||''}</div>
+          </a>
+          <span class="pill-share" onclick="shareEvent(${evIdx})" title="Share">${SHARE_SVG}</span>
+          <span class="pill-cal" onclick="generateICS(${evIdx})" title="Add to calendar">${CAL_SVG}</span>
+          <div class="pill-footer">
+            <button class="pill-footer-btn" onclick="generateICS(${evIdx})" title="Add to calendar">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Cal
+            </button>
+            <button class="pill-footer-btn" onclick="shareEvent(${evIdx})" title="Share">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              Share
+            </button>
+            <a class="pill-footer-btn" href="${ticketUrl}" target="_blank" rel="noopener" title="Get tickets">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Tickets
+            </a>
+          </div>
+        </div>`;
       }
       h += '</div></div>';
     }
@@ -1354,7 +1418,6 @@
     document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
 
     currentPage = 0;
-    const genre = document.getElementById('genreFilter').value;
     const p = { sort: currentSort, includeTest: 'no', countryCode: 'US', classificationName: 'music' };
     if (selectedState) p.stateCode = selectedState;
     if (selectedMonth) {
@@ -1366,7 +1429,6 @@
     } else {
       p.startDateTime = new Date().toISOString().split('T')[0] + 'T00:00:00Z';
     }
-    if (genre) p.genreId = genre;
 
     lastParams = p;
     fetchEvents(p, 0);

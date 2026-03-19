@@ -1,5 +1,17 @@
 # Stageside Changelog
 
+## v2.3.0 — 2026-03-19
+
+### Changed
+- **Removed Genre filter** — was non-functional; removed from toolbar to reduce clutter
+- **Default homepage** — now loads current-month New York City events (was generic US music feed)
+- **Tour pill mobile UX** — replaced single tappable pill with a three-button footer bar (Cal / Share / Tickets) so actions are clearly separated and accidental navigation is prevented
+- **Country selector on mobile** — shows flag emoji only (compact, ~52px); full text shown on desktop
+- **Search bar on mobile** — no longer wraps; stays on one row with expanded input and compact flag selector
+- **DC added to state map** — Washington DC now appears in the Browse by Location grid
+- **"Data via Ticketmaster"** — attribution line added under hero title
+- **Improved iOS home screen icon** — new apple-touch-icon.svg with accent bar and bold S
+
 ## v2.2.0 — 2026-03-19
 
 ### Added
