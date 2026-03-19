@@ -1,5 +1,10 @@
 # Stageside Changelog
 
+## v2.4.4 — 2026-03-19
+
+### Fixed
+- **Hero scroll lag (final fix)** — removed missed `transition: padding .25s ease` from the base `.hero` rule; hero re-expansion at `scrollY === 0` is now instant with no layout reflow
+
 ## v2.4.3 — 2026-03-19
 
 ### Fixed
