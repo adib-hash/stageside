@@ -397,6 +397,12 @@
   .tour-group { margin-bottom: 24px; }
   .tour-head { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 2px solid var(--accent); margin-bottom: 10px; }
   .tour-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1.5px; }
+  .tour-name-btn {
+    font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1.5px;
+    background: none; border: none; color: var(--text); cursor: pointer; padding: 0;
+    text-align: left; line-height: 1; transition: color .15s;
+  }
+  .tour-name-btn:hover { color: var(--accent); }
   .tour-cnt { font-size: 10px; background: var(--surface2); border: 1px solid var(--border); padding: 2px 8px; border-radius: 10px; color: var(--muted2); letter-spacing: 1px; }
   .tour-pills { display: flex; gap: 6px; flex-wrap: wrap; }
   .tour-pill {
@@ -612,15 +618,13 @@
 <div class="toolbar">
   <div class="date-chips-row">
     <button class="chip" id="dchip-custom" onclick="setDateChip('custom')">Custom Dates</button>
+    <button class="chip ghost" id="clear-filters-btn" onclick="clearAllFilters()" title="Clear all filters">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      Clear
+    </button>
   </div>
   <div class="toolbar-right">
-    <button class="chip active" id="chip-date" onclick="setSort('date')">Date &#8593;</button>
-    <button class="chip" id="chip-name" onclick="setSort('name')">Artist A-Z</button>
-    <button class="chip" id="chip-rel" onclick="setSort('relevance')">Relevance</button>
-    <div class="view-btns" style="margin-left:6px">
-      <button class="vbtn" id="vlist" onclick="setView('list')" title="List">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-      </button>
+    <div class="view-btns">
       <button class="vbtn" id="vgrid" onclick="setView('grid')" title="Grid">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       </button>
@@ -866,11 +870,7 @@
   }
 
   function setSort(t) {
-    document.querySelectorAll('.chip').forEach(c => {
-      if (['chip-date','chip-name','chip-rel'].includes(c.id)) c.classList.remove('active');
-    });
-    document.getElementById('chip-' + (t === 'date' ? 'date' : t === 'name' ? 'name' : 'rel')).classList.add('active');
-    currentSort = t === 'date' ? 'date,asc' : t === 'name' ? 'name,asc' : 'relevance,desc';
+    currentSort = 'date,asc';
     doSearch();
   }
 
@@ -883,6 +883,62 @@
     } else if (cachedData) {
       renderData(cachedData);
     }
+  }
+
+  function clearAllFilters() {
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('.artist-btn').forEach(b => b.classList.remove('active'));
+    nearMeActive = false;
+    document.getElementById('nearMeBtn').classList.remove('active');
+    activeDateChip = null;
+    document.getElementById('dchip-custom').classList.remove('active');
+    document.getElementById('customDatesRow').style.display = 'none';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    document.getElementById('countryFilter').value = 'US';
+    document.getElementById('countryFilterMobile').value = 'US';
+    selectedState = null;
+    selectedMonth = null;
+    document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('monthSlider').value = '0';
+    document.getElementById('monthLabel').textContent = '—';
+    document.getElementById('monthSublabel').textContent = 'Move slider to select';
+    loadDefault();
+  }
+
+  function searchArtist(name) {
+    // Clear all active filters
+    nearMeActive = false;
+    document.getElementById('nearMeBtn').classList.remove('active');
+    activeDateChip = null;
+    document.getElementById('dchip-custom').classList.remove('active');
+    document.getElementById('customDatesRow').style.display = 'none';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    selectedState = null;
+    selectedMonth = null;
+    document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+    // Set search to artist name
+    document.getElementById('searchInput').value = name;
+    document.querySelectorAll('.artist-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === name));
+    // Ensure tour view
+    currentView = 'tour';
+    document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('active'));
+    document.getElementById('vtour').classList.add('active');
+    // Search with no date restriction — all upcoming shows
+    const country = document.getElementById('countryFilter').value;
+    const today = new Date().toISOString().split('T')[0];
+    const p = {
+      keyword: name,
+      sort: 'date,asc',
+      includeTest: 'no',
+      startDateTime: today + 'T00:00:00Z',
+    };
+    if (country) p.countryCode = country;
+    lastParams = p;
+    currentPage = 0;
+    fetchEvents(p, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function syncCountry(source, val) {
@@ -1247,7 +1303,7 @@
 
       h += `<div class="tour-group">
         <div class="tour-head">
-          <span class="tour-name">${artist}</span>
+          <button class="tour-name-btn" onclick="searchArtist('${safeArtist}')" title="View all shows">${artist}</button>
           <span class="tour-cnt">${shows.length} show${shows.length>1?'s':''}</span>
           <span class="star-btn${starred?' starred':''}" data-artist="${artist.replace(/"/g,'&quot;')}" onclick="toggleStar('${safeArtist}',this)" title="${starred?'Unfollow':'Follow'}">${starred?STAR_SVG_FILLED:STAR_SVG_OUTLINE}</span>
           <button class="ig-btn" onclick="generateIGPost(${idx})" title="Download Instagram post">${shareSVG}</button>

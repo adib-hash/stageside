@@ -1,5 +1,13 @@
 # Stageside Changelog
 
+## v2.4.0 — 2026-03-19
+
+### Changed
+- **Removed sort options** — "Artist A-Z" and "Relevance" sort buttons removed; results always sort by date
+- **Removed List view** — three views remain: Grid, Tour (default), My Artists Feed
+- **Clear Filters button** — added to toolbar next to Custom Dates; resets all search state and returns to NYC default
+- **Artist names are clickable** — tapping an artist name in Tour view opens a focused search for that artist's all upcoming shows, clearing any active filters
+
 ## v2.3.0 — 2026-03-19
 
 ### Changed
