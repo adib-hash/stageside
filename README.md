@@ -1,62 +1,72 @@
-# 🎸 STAGESIDE — Concert Tour Tracker
+# Stageside -- Concert Tour Tracker
 
-Browse live concerts by tour date and city, powered by the Ticketmaster Discovery API.
+Browse live concerts by tour date and city, powered by the Ticketmaster Discovery API. Deployed on Vercel.
 
----
-
-## Setup (takes 2 minutes)
-
-### 1. Install Node.js (if you don't have it)
-Download from https://nodejs.org — get the LTS version
-
-### 2. Start the server
-
-**Mac / Linux:**
-```bash
-cd stageside
-node server.js
-```
-
-**Windows:**
-```
-cd stageside
-node server.js
-```
-
-### 3. Open the app
-Visit **http://localhost:3000** in your browser
-
-### 4. Enter your API key
-Paste your Ticketmaster API key in the field at the top and click **Save Key**.
-
-Your key is stored in a local `.env` file — it persists between restarts.
-
----
-
-## Optional: Pre-load your API key
-
-You can skip the in-app setup by creating a `.env` file in this folder:
-
-```
-TM_API_KEY=your_key_here
-```
-
-Or pass it as a startup argument (Mac/Linux):
-```bash
-bash start.sh YOUR_API_KEY_HERE
-```
+**Current version: v2.4.4**
 
 ---
 
 ## Features
 
 - **Search** any artist, band, tour name, or venue
-- **Filter** by genre, country, and date range
-- **3 View Modes**: List, Grid (with images), Tour (all dates grouped by artist)
-- **Sort** by date, artist name, or relevance
-- **Quick-click sidebar** with 24 popular artists
+- **Tour view** as the default (and primary) view, with Grid as an alternative
+- **My Artists** -- star/save artists across views; dedicated Feed view fetches all saved artists in parallel
+- **Smart Relevance Split** -- primary matches separated from tangential results
+- **Add to Calendar** -- download .ics files for any event (iPhone Calendar, Google Calendar, Outlook)
+- **Near Me** -- geolocation search using browser location; detected city shown in search bar
+- **Browse by Location** -- US state tile grid with month slider; click a state to filter events
+- **IG Post Generator** -- download a 1080x1080 PNG with artist tour dates, suitable for Instagram
+- **Share button** -- native iOS share sheet, clipboard fallback on desktop
+- **Dark / Light mode** -- toggle in header, persisted in localStorage
+- **Country selector** -- flag emoji on mobile, full text on desktop
+- **Default homepage** -- loads current-month New York City events on open
+- **Compact mobile hero** -- collapses on scroll, re-expands when tapping the logo
+- **Logo as home button** -- resets app to default state
+- **iOS PWA support** -- apple-touch-icon, meta tags, double-tap zoom prevention
+- **Custom date range** filter
 - Direct **Get Tickets** links to Ticketmaster
 - Pagination through thousands of events
+- Version footer
+
+---
+
+## Setup
+
+Stageside runs on Vercel with serverless API routes. There is no local Node.js server to start.
+
+### Prerequisites
+
+- A [Vercel](https://vercel.com) account (free tier)
+- A Ticketmaster API key (see [API Info](#api-info) below)
+
+### Deploy
+
+1. Push the repo to GitHub
+2. Import the repo in Vercel
+3. In Vercel project settings, add the environment variable:
+   ```
+   TM_API_KEY=your_ticketmaster_api_key
+   ```
+4. Deploy. The app is live -- no further configuration needed.
+
+The API key is injected server-side. Users never see or enter a key.
+
+### Local development
+
+```bash
+npm i -g vercel
+vercel dev
+```
+
+Set `TM_API_KEY` in a `.env` file in the project root for local runs.
+
+---
+
+## Project Structure
+
+- `public/` -- static frontend (HTML, CSS, JS)
+- `api/` -- Vercel serverless functions (`events`, `attractions`, `venues`)
+- `vercel.json` -- routing and static file config
 
 ---
 
